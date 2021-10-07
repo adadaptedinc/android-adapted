@@ -6,10 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageButton
 import com.adadapted.androidadapted.R
 
-class ListRecyclerAdapter(context: Context?, data: List<String>?) : RecyclerView.Adapter<ListRecyclerAdapter.ViewHolder>() {
-    private var mData: List<String>? = data
+class ListRecyclerAdapter(context: Context?, data: MutableList<String>?) : RecyclerView.Adapter<ListRecyclerAdapter.ViewHolder>() {
+    private var mData: MutableList<String>? = data
     private var mInflater: LayoutInflater? = null
     private var mClickListener: ItemClickListener? = null
 
@@ -34,21 +35,33 @@ class ListRecyclerAdapter(context: Context?, data: List<String>?) : RecyclerView
         return mData!!.size
     }
 
+    fun addItem(itemName: String) {
+        mData?.add(itemName)
+        notifyDataSetChanged()
+    }
+
+    fun removeItem(index: Int) {
+        mData?.removeAt(index)
+        notifyDataSetChanged()
+    }
+
     // stores and recycles views as they are scrolled off screen
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        var itemTextView: TextView = itemView.findViewById(R.id.itemName)
+        val itemTextView: TextView = itemView.findViewById(R.id.itemName)
         override fun onClick(view: View?) {
             mClickListener?.onItemClick(view, adapterPosition)
         }
-
         init {
             itemView.setOnClickListener(this)
+            itemView.findViewById<ImageButton>(R.id.delete_button).setOnClickListener {
+                removeItem(adapterPosition)
+            }
         }
     }
 
     // convenience method for getting data at click position
-    fun getItem(id: Int): String? {
+    fun getItem(id: Int): String {
         return mData!![id]
     }
 
