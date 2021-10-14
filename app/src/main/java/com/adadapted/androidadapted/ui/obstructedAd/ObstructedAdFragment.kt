@@ -23,9 +23,8 @@ class ObstructedAdFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        obstructedAdViewModel =
-            ViewModelProvider(this).get(ObstructedAdViewModel::class.java)
+    ): View {
+        obstructedAdViewModel = ViewModelProvider(this).get(ObstructedAdViewModel::class.java)
 
         _binding = FragmentObstructedAdBinding.inflate(inflater, container, false)
         val root: View = binding.root

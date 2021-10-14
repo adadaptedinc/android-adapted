@@ -1,10 +1,11 @@
 package com.adadapted.androidadapted.ui.list
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -29,34 +30,18 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        listViewModel =
-            ViewModelProvider(this).get(ListViewModel::class.java)
-
+        listViewModel = ViewModelProvider(this).get(ListViewModel::class.java)
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val clearButton = binding.clearButton
         val addButton = binding.addButton
+        val addItemText = binding.addItemText
 
         addButton.isVisible = false
         clearButton.isVisible = false
 
-        val sampleGroceries: ArrayList<String> = ArrayList()
-        sampleGroceries.add("Milk")
-        sampleGroceries.add("Eggs")
-        sampleGroceries.add("Cheese")
-        sampleGroceries.add("Bread")
-        sampleGroceries.add("Coffee")
+        setupRecyclerView()
 
-        val recyclerView: RecyclerView = binding.listRecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(this.context)
-        adapter = ListRecyclerAdapter(this.context, sampleGroceries)
-        adapter?.setClickListener(this)
-        recyclerView.adapter = adapter
-
-        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, 1)
-        recyclerView.addItemDecoration(dividerItemDecoration)
-
-        val addItemText = binding.addItemText
         addItemText.setOnEditorActionListener { editText, _, _ ->
             if (!addItemText.text.isNullOrEmpty()) {
                 adapter?.addItem(editText?.text.toString())
@@ -83,11 +68,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
                 clearButton.isVisible = false
             }
         }
-
-//        val textView: TextView = binding.textList
-//        listViewModel.text.observe(viewLifecycleOwner, Observer {
-//            textView.text = it
-//        })
+        setupAutoComplete(addItemText)
         return root
     }
 
@@ -98,5 +79,37 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
 
     override fun onItemClick(view: View?, position: Int) {
         Toast.makeText(this.context, "You clicked " + adapter?.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupRecyclerView() {
+        val recyclerView: RecyclerView = binding.listRecyclerView
+        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, 1)
+        val sampleGroceries: ArrayList<String> = ArrayList()
+
+        sampleGroceries.add("Milk")
+        sampleGroceries.add("Eggs")
+        sampleGroceries.add("Cheese")
+        sampleGroceries.add("Bread")
+        sampleGroceries.add("Coffee")
+
+        recyclerView.layoutManager = LinearLayoutManager(this.context)
+        adapter = ListRecyclerAdapter(this.context, sampleGroceries)
+        adapter?.setClickListener(this)
+        recyclerView.adapter = adapter
+
+        recyclerView.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun setupAutoComplete(addItemText: AutoCompleteTextView) {
+        val autoCompleteItems = arrayOf("Milk", "Eggs", "Cheese", "Bread")
+        val arrayAdapter = this.context?.let { ArrayAdapter(it, android.R.layout.select_dialog_item, autoCompleteItems) }
+
+        addItemText.threshold = 3
+        addItemText.setAdapter(arrayAdapter)
+
+        addItemText.setOnItemClickListener { _, _, position, _ ->
+            arrayAdapter?.getItem(position)?.let { adapter?.addItem(it) }
+            addItemText.text.clear()
+        }
     }
 }
