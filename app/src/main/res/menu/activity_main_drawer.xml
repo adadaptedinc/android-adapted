@@ -13,8 +13,8 @@
             android:icon="@drawable/ic_baseline_visibility_off_24"
             android:title="@string/menu_obstructed_ad" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_sign_in"
+            android:icon="@drawable/ic_menu_sign_in"
+            android:title="@string/menu_sign_in" />
     </group>
 </menu>

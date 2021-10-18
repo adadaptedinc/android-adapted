@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_obstructed_ad" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.adadapted.androidadapted.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_sign_in"
+        android:name="com.adadapted.androidadapted.ui.signin.SignInFragment"
+        android:label="@string/menu_sign_in"
+        tools:layout="@layout/fragment_signin" />
 </navigation>

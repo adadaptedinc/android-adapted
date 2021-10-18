@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+#-keepclasseswithmembernames public class com.adadapted.android.sdk.** { *; }
+#-keep class com.adadapted.android.sdk.** { *; }
