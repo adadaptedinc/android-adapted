@@ -44,10 +44,18 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp" />
 
+    <com.adadapted.android.sdk.ui.view.AaZoneView
+        android:id="@+id/list_adZoneView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_item_text"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="4dp"
-        android:layout_below="@id/add_item_text" />
+        android:layout_below="@id/list_adZoneView" />
 </RelativeLayout>

@@ -15,12 +15,17 @@ import com.adadapted.androidadapted.databinding.FragmentListBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.adadapted.android.sdk.core.atl.AddToListContent
+import com.adadapted.android.sdk.core.intercept.KeywordInterceptMatcher
+import com.adadapted.android.sdk.ui.messaging.AdContentListener
+import com.adadapted.android.sdk.ui.view.AaZoneView
 
-class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
+class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
 
     private lateinit var listViewModel: ListViewModel
     private var _binding: FragmentListBinding? = null
     private var adapter: ListRecyclerAdapter? = null
+    private var listAdZoneView: AaZoneView? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -37,6 +42,8 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
         val addButton = binding.addButton
         val addItemText = binding.addItemText
 
+        listAdZoneView = binding.listAdZoneView
+        listAdZoneView?.init("101930") //init list ZoneView
         addButton.isVisible = false
         clearButton.isVisible = false
 
@@ -72,9 +79,28 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
         return root
     }
 
+    override fun onStart() {
+        super.onStart()
+        listAdZoneView?.onStart(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        listAdZoneView?.onStop(this)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onContentAvailable(zoneId: String, content: AddToListContent) {
+        val items = content.getItems()
+        for (item in items) {
+            adapter?.addItem(item.title)
+            // Acknowledge the item(s) added to the list
+            content.itemAcknowledge(item)
+        }
     }
 
     override fun onItemClick(view: View?, position: Int) {
@@ -101,7 +127,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
     }
 
     private fun setupAutoComplete(addItemText: AutoCompleteTextView) {
-        val autoCompleteItems = arrayOf("Milk", "Eggs", "Cheese", "Bread")
+        val autoCompleteItems = mutableListOf("Milk", "Eggs", "Cheese", "Bread")
         val arrayAdapter = this.context?.let { ArrayAdapter(it, android.R.layout.select_dialog_item, autoCompleteItems) }
 
         addItemText.threshold = 3
@@ -110,6 +136,16 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {
         addItemText.setOnItemClickListener { _, _, position, _ ->
             arrayAdapter?.getItem(position)?.let { adapter?.addItem(it) }
             addItemText.text.clear()
+        }
+
+        addItemText.doOnTextChanged { text, _, _, _ ->
+            val suggestions = text?.let { KeywordInterceptMatcher.match(it) }
+            if (suggestions != null) {
+                for (suggestion in suggestions) {
+                    arrayAdapter?.add(suggestion.name)
+                    arrayAdapter?.notifyDataSetChanged()
+                }
+            }
         }
     }
 }

@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.adadapted.androidadapted">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
+        android:name=".ApplicationStartup"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,6 +25,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.adadapted.android.sdk.ui.activity.AaWebViewPopupActivity"
+            android:label="WebViewPopupActivity">
+        </activity>
+        <activity
+            android:name="com.adadapted.android.sdk.ui.activity.AdditInterceptActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:exported="true">
+
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Replace PROTOCOL and ADDIT with their respective parts from the
+                     URI protocol provided to you (in the form of "PROTOCOL://ADDIT/)” -->
+                <!-- Please note that the leading "/" is required for pathPrefix -->
+                <data
+                    android:host="adadapted.com"
+                    android:pathPrefix="/"
+                    android:scheme="droidrecipe" />
+
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
