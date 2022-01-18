@@ -12,7 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.adadapted.androidadapted.databinding.ActivityMainBinding
-import me.bclifton.library.Greeting
+import com.adadapted.library.Greeting
 
 class MainActivity : AppCompatActivity() {
 
