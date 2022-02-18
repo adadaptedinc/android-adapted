@@ -50,7 +50,6 @@ dependencies {
     implementation 'com.gitlab.adadapted:android_sdk:2.3.2'
     implementation 'androidx.ads:ads-identifier:1.0.0-alpha04'
     implementation 'com.google.guava:guava:28.0-android'
-    //implementation 'io.gitlab.adadapted:test_kmm_lib:0.0.3'
     implementation 'com.adadapted:aa_multiplatform_sdk:0.0.7'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
