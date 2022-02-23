@@ -15,17 +15,17 @@ import com.adadapted.androidadapted.databinding.FragmentListBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.adadapted.android.sdk.core.atl.AddToListContent
-import com.adadapted.android.sdk.core.intercept.KeywordInterceptMatcher
-import com.adadapted.android.sdk.ui.messaging.AdContentListener
-import com.adadapted.android.sdk.ui.view.AaZoneView
+//import com.adadapted.android.sdk.core.atl.AddToListContent
+//import com.adadapted.android.sdk.core.intercept.KeywordInterceptMatcher
+//import com.adadapted.android.sdk.ui.messaging.AdContentListener
+//import com.adadapted.android.sdk.ui.view.AaZoneView
 
-class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
+class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener {//AdContentListener {
 
     private lateinit var listViewModel: ListViewModel
     private var _binding: FragmentListBinding? = null
     private var adapter: ListRecyclerAdapter? = null
-    private var listAdZoneView: AaZoneView? = null
+    //private var listAdZoneView: AaZoneView? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -42,8 +42,8 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val addButton = binding.addButton
         val addItemText = binding.addItemText
 
-        listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("101930") //init list ZoneView
+//        listAdZoneView = binding.listAdZoneView
+//        listAdZoneView?.init("101930") //init list ZoneView
         addButton.isVisible = false
         clearButton.isVisible = false
 
@@ -81,12 +81,12 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
 
     override fun onStart() {
         super.onStart()
-        listAdZoneView?.onStart(this)
+        //listAdZoneView?.onStart(this)
     }
 
     override fun onStop() {
         super.onStop()
-        listAdZoneView?.onStop(this)
+        //listAdZoneView?.onStop(this)
     }
 
     override fun onDestroyView() {
@@ -94,14 +94,14 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         _binding = null
     }
 
-    override fun onContentAvailable(zoneId: String, content: AddToListContent) {
-        val items = content.getItems()
-        for (item in items) {
-            adapter?.addItem(item.title)
-            // Acknowledge the item(s) added to the list
-            content.itemAcknowledge(item)
-        }
-    }
+//    override fun onContentAvailable(zoneId: String, content: AddToListContent) {
+//        val items = content.getItems()
+//        for (item in items) {
+//            adapter?.addItem(item.title)
+//            // Acknowledge the item(s) added to the list
+//            content.itemAcknowledge(item)
+//        }
+//    }
 
     override fun onItemClick(view: View?, position: Int) {
         Toast.makeText(this.context, "You clicked " + adapter?.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show()
@@ -138,14 +138,14 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             addItemText.text.clear()
         }
 
-        addItemText.doOnTextChanged { text, _, _, _ ->
-            val suggestions = text?.let { KeywordInterceptMatcher.match(it) }
-            if (suggestions != null) {
-                for (suggestion in suggestions) {
-                    arrayAdapter?.add(suggestion.name)
-                    arrayAdapter?.notifyDataSetChanged()
-                }
-            }
-        }
+//        addItemText.doOnTextChanged { text, _, _, _ ->
+//            val suggestions = text?.let { KeywordInterceptMatcher.match(it) }
+//            if (suggestions != null) {
+//                for (suggestion in suggestions) {
+//                    arrayAdapter?.add(suggestion.name)
+//                    arrayAdapter?.notifyDataSetChanged()
+//                }
+//            }
+//        }
     }
 }

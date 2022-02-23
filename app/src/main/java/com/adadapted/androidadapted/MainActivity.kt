@@ -11,8 +11,18 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.adadapted.androidadapted.databinding.ActivityMainBinding
+import com.adadapted.library.DeviceInfo
 import com.adadapted.library.Greeting
+import com.adadapted.library.constants.Config
+import com.adadapted.library.network.HttpSessionAdapter
+import com.adadapted.library.session.Session
+import com.adadapted.library.session.SessionAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +57,32 @@ class MainActivity : AppCompatActivity() {
         // kmm test lib implementation
         var check = Greeting().greeting()
         var doubleCheck = check
+        testKmmSessionConnection()
+    }
+
+    fun testKmmSessionConnection() {
+        val httpSessionAdapter = HttpSessionAdapter(Config.getInitSessionUrl(), Config.getRefreshAdsUrl())
+        val deviceInfo = DeviceInfo(
+            appId = "NWY0NTM2YZDMMDQ0",
+            udid = "1234567890",
+            device = "Android Emulator",
+            deviceUdid = "12345",
+            os = "Android",
+            isAllowRetargetingEnabled = true,
+            sdkVersion = "0.0.8"
+        )
+        val listener = (object : SessionAdapter.SessionInitListener {
+            override fun onSessionInitialized(session: Session) {
+                var returnedSession = session
+            }
+
+            override fun onSessionInitializeFailed() {
+               var uhOh = "notgood"
+            }
+        })
+        lifecycleScope.launch {
+            httpSessionAdapter.sendInit(deviceInfo, listener)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
