@@ -3,24 +3,24 @@ package com.adadapted.androidadapted
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
-//import com.adadapted.android.sdk.AdAdapted
-//import com.adadapted.android.sdk.core.atl.AddToListContent
-//import com.adadapted.android.sdk.core.atl.AddToListItem
-//import com.adadapted.android.sdk.ui.messaging.AaSdkAdditContentListener
-//import com.adadapted.android.sdk.ui.messaging.AaSdkEventListener
-//import com.adadapted.android.sdk.ui.messaging.AaSdkSessionListener
+import com.adadapted.library.AdAdapted
+import com.adadapted.library.AdAdaptedEnv
 import java.util.Locale
 
 class ApplicationStartup: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val tag = "AADroid"
+        val tag = "AADroidTestApp"
 
-        //AdAdapted.INSTANCE.disableAdTracking(this); //Disable ad tracking completely
-//        AdAdapted
-//            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#
-//            .inEnv(AdAdapted.Env.DEV)
+
+        //AdAdapted.disableAdTracking(this); //Disable ad tracking completely
+        AdAdapted
+            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#   NTKXMZFJZTA2NMZJ
+            .inEnvironment(AdAdaptedEnv.DEV)
+            .onHasAdsToServe {
+                Log.i(tag, "Has Ads To Serve: $it")
+            }
 //            .setSdkSessionListener(object : AaSdkSessionListener {
 //                override fun onHasAdsToServe(hasAds: Boolean) {
 //                    Log.i(tag, "Has Ads To Serve: $hasAds")
@@ -45,6 +45,6 @@ class ApplicationStartup: Application() {
 //                            ).show()
 //                }
 //            })
-//            .start(this)
+            .start(this)
     }
 }
