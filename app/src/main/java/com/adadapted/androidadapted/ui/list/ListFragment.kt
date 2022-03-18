@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.adadapted.library.ad.AdContentListener
 import com.adadapted.library.atl.AddToListContent
+import com.adadapted.library.keyword.InterceptMatcher
 import com.adadapted.library.view.AndroidZoneView
 
 class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
@@ -126,6 +127,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
     }
 
     private fun setupAutoComplete(addItemText: AutoCompleteTextView) {
+        val autoCompleteAddedItems = mutableSetOf<String>()
         val autoCompleteItems = mutableListOf("Milk", "Eggs", "Cheese", "Bread")
         val arrayAdapter = this.context?.let { ArrayAdapter(it, android.R.layout.select_dialog_item, autoCompleteItems) }
 
@@ -137,14 +139,17 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             addItemText.text.clear()
         }
 
-//        addItemText.doOnTextChanged { text, _, _, _ ->
-//            val suggestions = text?.let { KeywordInterceptMatcher.match(it) }
-//            if (suggestions != null) {
-//                for (suggestion in suggestions) {
-//                    arrayAdapter?.add(suggestion.name)
-//                    arrayAdapter?.notifyDataSetChanged()
-//                }
-//            }
-//        }
+        addItemText.doOnTextChanged { text, _, _, _ ->
+            val suggestions = text?.let { InterceptMatcher.match(it) }
+            if (suggestions != null) {
+                for (suggestion in suggestions) {
+                    if (!autoCompleteAddedItems.contains(suggestion.name)) {
+                        arrayAdapter?.add(suggestion.name)
+                        autoCompleteAddedItems.add(suggestion.name)
+                        arrayAdapter?.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 }
