@@ -21,6 +21,7 @@ class ApplicationStartup : Application() {
         AdAdapted
             .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#   NTKXMZFJZTA2NMZJ
             .inEnvironment(AdAdaptedEnv.DEV)
+            .enableKeywordIntercept(true)
             .onHasAdsToServe {
                 Log.i(tag, "Has Ads To Serve: $it")
             }
