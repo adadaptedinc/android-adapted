@@ -144,8 +144,8 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             if (suggestions != null) {
                 for (suggestion in suggestions) {
                     if (!autoCompleteAddedItems.contains(suggestion.name)) {
-                        arrayAdapter?.add(suggestion.name)
                         autoCompleteAddedItems.add(suggestion.name)
+                        arrayAdapter?.add(suggestion.name)
                         arrayAdapter?.notifyDataSetChanged()
                     }
                 }
