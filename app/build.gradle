@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         applicationId "com.adadapted.androidadapted"
         minSdk 28
-        targetSdk 30
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -47,10 +47,13 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
-    implementation 'com.gitlab.adadapted:android_sdk:2.3.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt'
+    //implementation 'com.gitlab.adadapted:android_sdk:2.3.2' //old mobile SDK
     implementation 'androidx.ads:ads-identifier:1.0.0-alpha04'
     implementation 'com.google.guava:guava:28.0-android'
-    implementation 'com.adadapted:aa_multiplatform_sdk:0.0.8' // local sdk
+    //implementation 'com.adadapted:aa_multiplatform_sdk:0.0.8' // local sdk
+    implementation 'com.adadapted:aamsdk:0.0.1' // local lib
     //implementation 'com.adadapted:aa_multiplatform_sdk:0.0.7' official external SDK
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

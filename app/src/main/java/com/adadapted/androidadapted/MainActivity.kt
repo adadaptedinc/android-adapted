@@ -12,7 +12,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.adadapted.androidadapted.databinding.ActivityMainBinding
-import com.adadapted.library.Greeting
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,10 +42,6 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        // kmm test lib implementation
-        var check = Greeting().greeting()
-        var doubleCheck = check
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

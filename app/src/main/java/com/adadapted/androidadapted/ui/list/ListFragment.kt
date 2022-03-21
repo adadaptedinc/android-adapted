@@ -15,17 +15,17 @@ import com.adadapted.androidadapted.databinding.FragmentListBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.adadapted.android.sdk.core.atl.AddToListContent
-import com.adadapted.android.sdk.core.intercept.KeywordInterceptMatcher
-import com.adadapted.android.sdk.ui.messaging.AdContentListener
-import com.adadapted.android.sdk.ui.view.AaZoneView
+import com.adadapted.library.ad.AdContentListener
+import com.adadapted.library.atl.AddToListContent
+import com.adadapted.library.keyword.InterceptMatcher
+import com.adadapted.library.view.AndroidZoneView
 
 class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
 
     private lateinit var listViewModel: ListViewModel
     private var _binding: FragmentListBinding? = null
     private var adapter: ListRecyclerAdapter? = null
-    private var listAdZoneView: AaZoneView? = null
+    private var listAdZoneView: AndroidZoneView? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -43,7 +43,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val addItemText = binding.addItemText
 
         listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("101930") //init list ZoneView
+        listAdZoneView?.init("101930") //init list ZoneView 100804 101930
         addButton.isVisible = false
         clearButton.isVisible = false
 
@@ -81,7 +81,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
 
     override fun onStart() {
         super.onStart()
-        listAdZoneView?.onStart(this)
+        listAdZoneView?.onStart(contentListener = this)
     }
 
     override fun onStop() {
@@ -127,6 +127,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
     }
 
     private fun setupAutoComplete(addItemText: AutoCompleteTextView) {
+        val autoCompleteAddedItems = mutableSetOf<String>()
         val autoCompleteItems = mutableListOf("Milk", "Eggs", "Cheese", "Bread")
         val arrayAdapter = this.context?.let { ArrayAdapter(it, android.R.layout.select_dialog_item, autoCompleteItems) }
 
@@ -139,11 +140,14 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         }
 
         addItemText.doOnTextChanged { text, _, _, _ ->
-            val suggestions = text?.let { KeywordInterceptMatcher.match(it) }
+            val suggestions = text?.let { InterceptMatcher.match(it) }
             if (suggestions != null) {
                 for (suggestion in suggestions) {
-                    arrayAdapter?.add(suggestion.name)
-                    arrayAdapter?.notifyDataSetChanged()
+                    if (!autoCompleteAddedItems.contains(suggestion.name)) {
+                        arrayAdapter?.add(suggestion.name)
+                        autoCompleteAddedItems.add(suggestion.name)
+                        arrayAdapter?.notifyDataSetChanged()
+                    }
                 }
             }
         }

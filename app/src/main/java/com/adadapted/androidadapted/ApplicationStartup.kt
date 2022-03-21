@@ -1,50 +1,42 @@
 package com.adadapted.androidadapted
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
 import android.widget.Toast
-import com.adadapted.android.sdk.AdAdapted
-import com.adadapted.android.sdk.core.atl.AddToListContent
-import com.adadapted.android.sdk.core.atl.AddToListItem
-import com.adadapted.android.sdk.ui.messaging.AaSdkAdditContentListener
-import com.adadapted.android.sdk.ui.messaging.AaSdkEventListener
-import com.adadapted.android.sdk.ui.messaging.AaSdkSessionListener
-import java.util.Locale
+import com.adadapted.library.AdAdapted
+import com.adadapted.library.AdAdaptedEnv
+import com.adadapted.library.atl.AddToListItem
 
-class ApplicationStartup: Application() {
+class ApplicationStartup : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val tag = "AADroid"
+        val tag = "AADroidTestApp"
 
-        //AdAdapted.INSTANCE.disableAdTracking(this); //Disable ad tracking completely
+
+        //AdAdapted.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#
-            .inEnv(AdAdapted.Env.DEV)
-            .setSdkSessionListener(object : AaSdkSessionListener {
-                override fun onHasAdsToServe(hasAds: Boolean) {
-                    Log.i(tag, "Has Ads To Serve: $hasAds")
+            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#   NTKXMZFJZTA2NMZJ
+            .inEnvironment(AdAdaptedEnv.DEV)
+            .enableKeywordIntercept(true)
+            .onHasAdsToServe {
+                Log.i(tag, "Has Ads To Serve: $it")
+            }
+//            .setSdkEventListener(object : AaSdkEventListener {
+//                override fun onNextAdEvent(zoneId: String, eventType: String) {
+//                    Log.i(tag, "Ad $eventType for Zone $zoneId")
+//                }
+//            })
+            .setSdkAddItContentListener {
+                val listItems: List<AddToListItem> = it.getItems()
+
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(this.applicationContext, "Received item: " + listItems.first().title, Toast.LENGTH_SHORT).show()
                 }
-            })
-            .setSdkEventListener(object : AaSdkEventListener {
-                override fun onNextAdEvent(zoneId: String, eventType: String) {
-                    Log.i(tag, "Ad $eventType for Zone $zoneId")
-                }
-            })
-            .setSdkAdditContentListener(object : AaSdkAdditContentListener {
-                override fun onContentAvailable(content: AddToListContent) {
-                    val listItems: List<AddToListItem> = content.getItems()
-                    Toast.makeText(
-                                applicationContext,
-                                String.format(
-                                    Locale.ENGLISH,
-                                    "%d item(s) received from payload or circular.",
-                                    listItems.size
-                                ),
-                                Toast.LENGTH_LONG
-                            ).show()
-                }
-            })
+            }
             .start(this)
     }
 }

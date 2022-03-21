@@ -19,12 +19,12 @@
                 android:layout_height="800dp"
                 android:src="@drawable/longimage" />
 
-            <com.adadapted.android.sdk.ui.view.AaZoneView
-                android:id="@+id/obstructed_adZoneView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"/>
+<!--            <com.adadapted.android.sdk.ui.view.AaZoneView-->
+<!--                android:id="@+id/obstructed_adZoneView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_marginBottom="16dp"/>-->
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 </RelativeLayout>
