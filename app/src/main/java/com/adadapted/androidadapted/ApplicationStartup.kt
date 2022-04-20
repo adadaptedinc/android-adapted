@@ -19,7 +19,7 @@ class ApplicationStartup : Application() {
 
         //AdAdapted.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#   NTKXMZFJZTA2NMZJ
+            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#   NTKXMZFJZTA2NMZJ //OG Prod NTDMZJK2NTM2YWZH //NWY0NTM2YZDMMDQ0 test
             .inEnvironment(AdAdaptedEnv.DEV)
             .enableKeywordIntercept(true)
             .onHasAdsToServe {
@@ -32,6 +32,8 @@ class ApplicationStartup : Application() {
 //            })
             .setSdkAddItContentListener {
                 val listItems: List<AddToListItem> = it.getItems()
+                it.itemAcknowledge(listItems.first())
+                it.acknowledge()
 
                 Handler(Looper.getMainLooper()).post {
                     Toast.makeText(this.applicationContext, "Received item: " + listItems.first().title, Toast.LENGTH_SHORT).show()

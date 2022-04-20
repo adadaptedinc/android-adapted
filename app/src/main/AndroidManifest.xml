@@ -32,7 +32,7 @@
             android:label="WebViewPopupActivity">
         </activity>
         <activity
-            android:name="com.adadapted.android.sdk.ui.activity.AdditInterceptActivity"
+            android:name="com.adadapted.library.deeplink.DeeplinkInterceptActivity"
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:excludeFromRecents="true"
@@ -50,7 +50,7 @@
                 <data
                     android:host="adadapted.com"
                     android:pathPrefix="/"
-                    android:scheme="droidrecipe" />
+                    android:scheme="androidadapted" />
 
             </intent-filter>
         </activity>
