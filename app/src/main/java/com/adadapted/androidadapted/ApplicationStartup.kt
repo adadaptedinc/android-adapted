@@ -6,6 +6,8 @@ import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.adadapted.library.AdAdapted
 import com.adadapted.library.AdAdaptedEnv
 import com.adadapted.library.atl.AddToListItem
@@ -36,6 +38,7 @@ class ApplicationStartup : Application() {
                 it.acknowledge()
 
                 Handler(Looper.getMainLooper()).post {
+                    AddToListItemCache.items.value = listItems
                     Toast.makeText(this.applicationContext, "Received item: " + listItems.first().title, Toast.LENGTH_SHORT).show()
                 }
             }

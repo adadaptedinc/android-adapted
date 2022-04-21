@@ -10,13 +10,16 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.adadapted.androidadapted.databinding.FragmentListBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.adadapted.androidadapted.AddToListItemCache
 import com.adadapted.library.ad.AdContentListener
 import com.adadapted.library.atl.AddToListContent
+import com.adadapted.library.atl.AddToListItem
 import com.adadapted.library.keyword.InterceptMatcher
 import com.adadapted.library.view.AndroidZoneView
 
@@ -41,6 +44,14 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val clearButton = binding.clearButton
         val addButton = binding.addButton
         val addItemText = binding.addItemText
+
+        val atlItemObserver = Observer<List<AddToListItem>> { items ->
+            for (item in items) {
+                adapter?.addItem(item.title)
+            }
+        }
+
+        AddToListItemCache.items.observe(viewLifecycleOwner, atlItemObserver)
 
         listAdZoneView = binding.listAdZoneView
         listAdZoneView?.init("101930") //init list ZoneView 100804 101930
