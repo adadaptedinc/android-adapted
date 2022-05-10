@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import com.adadapted.androidadapted.R
+import com.adadapted.library.AdAdaptedListManager
 
 class ListRecyclerAdapter(context: Context?, data: MutableList<String>?) : RecyclerView.Adapter<ListRecyclerAdapter.ViewHolder>() {
     private var mData: MutableList<String>? = data
@@ -56,6 +57,7 @@ class ListRecyclerAdapter(context: Context?, data: MutableList<String>?) : Recyc
             itemView.setOnClickListener(this)
             itemView.findViewById<ImageButton>(R.id.delete_button).setOnClickListener {
                 removeItem(adapterPosition)
+                AdAdaptedListManager.itemDeletedFromList(itemTextView.text.toString(), "Main Grocery List")
             }
         }
     }

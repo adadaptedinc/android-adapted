@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.adadapted.androidadapted.AddToListItemCache
+import com.adadapted.library.AdAdaptedListManager
 import com.adadapted.library.ad.AdContentListener
 import com.adadapted.library.atl.AddToListContent
 import com.adadapted.library.atl.AddToListItem
@@ -64,6 +65,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             if (!addItemText.text.isNullOrEmpty()) {
                 adapter?.addItem(editText?.text.toString())
                 addItemText.text.clear()
+                AdAdaptedListManager.itemAddedToList(addItemText.text.toString(), "Main Grocery List")
             }
             true
         }
@@ -71,6 +73,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         addButton.setOnClickListener {
             adapter?.addItem(addItemText.text.toString())
             addItemText.text.clear()
+            AdAdaptedListManager.itemAddedToList(addItemText.text.toString(), "Main Grocery List")
         }
 
         clearButton.setOnClickListener {
@@ -111,6 +114,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             adapter?.addItem(item.title)
             // Acknowledge the item(s) added to the list
             content.itemAcknowledge(item)
+            AdAdaptedListManager.itemAddedToList(item.title, "Main Grocery List")
         }
     }
 
@@ -146,7 +150,11 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         addItemText.setAdapter(arrayAdapter)
 
         addItemText.setOnItemClickListener { _, _, position, _ ->
-            arrayAdapter?.getItem(position)?.let { adapter?.addItem(it) }
+            val item = arrayAdapter?.getItem(position)
+            if (item != null) {
+                adapter?.addItem(item)
+                AdAdaptedListManager.itemAddedToList(item.toString())
+            }
             addItemText.text.clear()
         }
 
