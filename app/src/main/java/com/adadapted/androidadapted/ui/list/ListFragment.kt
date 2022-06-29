@@ -50,6 +50,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             for (item in items) {
                 adapter?.addItem(item.title)
             }
+            AddToListItemCache.holdingItems.clear()
         }
 
         AddToListItemCache.items.observe(viewLifecycleOwner, atlItemObserver)

@@ -16,9 +16,10 @@ class ApplicationStartup : Application() {
 
         //AdAdapted.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#   NTKXMZFJZTA2NMZJ //OG Prod NTDMZJK2NTM2YWZH //NWY0NTM2YZDMMDQ0 test
+            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE# NTDMZJK2NTM2YWZH //OG Prod //NWY0NTM2YZDMMDQ0 test
             .inEnvironment(AdAdaptedEnv.DEV)
             .enableKeywordIntercept(true)
+            .enableDebugLogging()
             .onHasAdsToServe {
                 Log.i(tag, "Has Ads To Serve: $it")
             }
@@ -26,12 +27,15 @@ class ApplicationStartup : Application() {
                 Log.i(tag, "Ad $eventType for Zone $zoneId")
             }
             .setSdkAddItContentListener {
-                val listItems: List<AddToListItem> = it.getItems()
+                val listItems = it.getItems()
                 it.itemAcknowledge(listItems.first())
                 it.acknowledge()
 
                 Handler(Looper.getMainLooper()).post {
-                    AddToListItemCache.items.value = listItems
+                    for (item in listItems) {
+                        AddToListItemCache.holdingItems.add(item)
+                    }
+                    AddToListItemCache.takeHoldingItems()
                     Toast.makeText(this.applicationContext, "Received item: " + listItems.first().title, Toast.LENGTH_SHORT).show()
                 }
             }
