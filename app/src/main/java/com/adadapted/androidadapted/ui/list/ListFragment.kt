@@ -22,6 +22,7 @@ import com.adadapted.library.ad.AdContentListener
 import com.adadapted.library.atl.AddToListContent
 import com.adadapted.library.atl.AddToListItem
 import com.adadapted.library.keyword.InterceptMatcher
+import com.adadapted.library.keyword.Suggestion
 import com.adadapted.library.view.AndroidZoneView
 
 class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
@@ -30,6 +31,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
     private var _binding: FragmentListBinding? = null
     private var adapter: ListRecyclerAdapter? = null
     private var listAdZoneView: AndroidZoneView? = null
+    private var currentKeywordSuggestions: Set<Suggestion> = setOf()
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -154,6 +156,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             val item = arrayAdapter?.getItem(position)
             if (item != null) {
                 adapter?.addItem(item)
+                currentKeywordSuggestions.firstOrNull{ suggestion -> suggestion.name == item }?.selected()
                 AdAdaptedListManager.itemAddedToList(item.toString())
             }
             addItemText.text.clear()
@@ -161,12 +164,16 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
 
         addItemText.doOnTextChanged { text, _, _, _ ->
             val suggestions = text?.let { InterceptMatcher.match(it) }
+            if (!suggestions.isNullOrEmpty()) {
+                currentKeywordSuggestions = suggestions
+            }
             if (suggestions != null) {
                 for (suggestion in suggestions) {
                     if (!autoCompleteAddedItems.contains(suggestion.name)) {
                         autoCompleteAddedItems.add(suggestion.name)
                         arrayAdapter?.add(suggestion.name)
                         arrayAdapter?.notifyDataSetChanged()
+                        suggestion.presented()
                     }
                 }
             }
