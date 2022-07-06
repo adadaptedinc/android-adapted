@@ -10,6 +10,7 @@ import com.adadapted.library.AdAdaptedEnv
 import com.adadapted.library.atl.AddToListContent
 import com.adadapted.library.interfaces.AddItContentListener
 import com.adadapted.library.interfaces.EventBroadcastListener
+import com.adadapted.library.interfaces.SessionBroadcastListener
 
 class ApplicationStartup : Application() {
     override fun onCreate() {
@@ -18,13 +19,15 @@ class ApplicationStartup : Application() {
 
         //AdAdapted.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE# //NWY0NTM2YZDMMDQ0 test
+            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE# NTDMZJK2NTM2YWZH //OG Prod //NWY0NTM2YZDMMDQ0 test
             .inEnvironment(AdAdaptedEnv.DEV)
             .enableKeywordIntercept(true)
             .enableDebugLogging()
-            .onHasAdsToServe {
-                Log.i(tag, "Has Ads To Serve: $it")
-            }
+            .setSdkSessionListener(object: SessionBroadcastListener {
+                override fun onHasAdsToServe(hasAds: Boolean) {
+                    Log.i(tag, "Has Ads To Serve: $hasAds")
+                }
+            })
             .setSdkEventListener(object: EventBroadcastListener {
                 override fun onAdEventTracked(zoneId: String, eventType: String) {
                     Log.i(tag, "Ad $eventType for Zone $zoneId")
