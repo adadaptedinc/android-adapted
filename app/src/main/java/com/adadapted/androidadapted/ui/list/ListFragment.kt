@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -21,9 +20,8 @@ import com.adadapted.library.AdAdaptedListManager
 import com.adadapted.library.ad.AdContentListener
 import com.adadapted.library.atl.AddToListContent
 import com.adadapted.library.atl.AddToListItem
-import com.adadapted.library.keyword.InterceptMatcher
-import com.adadapted.library.keyword.Suggestion
 import com.adadapted.library.view.AndroidZoneView
+import com.adadapted.library.view.AutoCompleteAdapter
 
 class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
 
@@ -31,7 +29,6 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
     private var _binding: FragmentListBinding? = null
     private var adapter: ListRecyclerAdapter? = null
     private var listAdZoneView: AndroidZoneView? = null
-    private var currentKeywordSuggestions: Set<Suggestion> = setOf()
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -145,9 +142,8 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
     }
 
     private fun setupAutoComplete(addItemText: AutoCompleteTextView) {
-        val autoCompleteAddedItems = mutableSetOf<String>()
         val autoCompleteItems = mutableListOf("Milk", "Eggs", "Cheese", "Bread")
-        val arrayAdapter = this.context?.let { ArrayAdapter(it, android.R.layout.select_dialog_item, autoCompleteItems) }
+        val arrayAdapter = this.context?.let { AutoCompleteAdapter(it, android.R.layout.select_dialog_item, autoCompleteItems) }
 
         addItemText.threshold = 3
         addItemText.setAdapter(arrayAdapter)
@@ -156,27 +152,10 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             val item = arrayAdapter?.getItem(position)
             if (item != null) {
                 adapter?.addItem(item)
-                currentKeywordSuggestions.firstOrNull{ suggestion -> suggestion.name == item }?.selected()
-                AdAdaptedListManager.itemAddedToList(item.toString())
+                arrayAdapter.suggestionSelected(item)
+                AdAdaptedListManager.itemAddedToList(item)
             }
             addItemText.text.clear()
-        }
-
-        addItemText.doOnTextChanged { text, _, _, _ ->
-            val suggestions = text?.let { InterceptMatcher.match(it) }
-            if (!suggestions.isNullOrEmpty()) {
-                currentKeywordSuggestions = suggestions
-            }
-            if (suggestions != null) {
-                for (suggestion in suggestions) {
-                    if (!autoCompleteAddedItems.contains(suggestion.name)) {
-                        autoCompleteAddedItems.add(suggestion.name)
-                        arrayAdapter?.add(suggestion.name)
-                        arrayAdapter?.notifyDataSetChanged()
-                        suggestion.presented()
-                    }
-                }
-            }
         }
     }
 }
