@@ -46,7 +46,7 @@ class ObstructedAdFragment : Fragment() {
         }
 
         obstructedAdZoneView = _binding?.obstructedAdZoneView
-        obstructedAdZoneView?.init("101930")
+        obstructedAdZoneView?.init("101930") //101930 old , 100804
         obstructedAdZoneView?.setAdZoneVisibility(false)
 
         return root

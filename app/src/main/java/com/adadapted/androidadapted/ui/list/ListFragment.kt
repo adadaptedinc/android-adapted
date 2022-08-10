@@ -55,7 +55,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         AddToListItemCache.items.observe(viewLifecycleOwner, atlItemObserver)
 
         listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("101930") //init list ZoneView 100804 101930
+        listAdZoneView?.init("101930") //init list ZoneView 100804 101930 //101953 is new endpoint and 100804 is KI endpoint
         addButton.isVisible = false
         clearButton.isVisible = false
 

@@ -19,7 +19,7 @@ class ApplicationStartup : Application() {
 
         //AdAdapted.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#  //NWY0NTM2YZDMMDQ0 test
+            .withAppId("NWY0NTM2YZDMMDQ0") // #YOUR API KEY GOES HERE#  //NWY0NTM2YZDMMDQ0 test //new plat  NWZHZWYWN2U2ODBH //new plat KI NTKXMZFJZTA2NMZJ 846ACA0X62F13A62
             .inEnvironment(AdAdaptedEnv.DEV)
             .enableKeywordIntercept(true)
             .enableDebugLogging()
