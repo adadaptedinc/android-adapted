@@ -43,7 +43,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val addItemText = binding.addItemText
 
         listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("101930") //init list ZoneView
+        listAdZoneView?.init("102110") //init list ZoneView 102110 101930
         addButton.isVisible = false
         clearButton.isVisible = false
 
