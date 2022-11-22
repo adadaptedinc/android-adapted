@@ -42,8 +42,8 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val addButton = binding.addButton
         val addItemText = binding.addItemText
 
-//        val layout = binding.layout
-//        val dynamicZoneView = this.context?.let { AaZoneView(it) }
+        val layout = binding.layout
+        val dynamicZoneView = this.context?.let { AaZoneView(it) }
 
         listAdZoneView = binding.listAdZoneView
         listAdZoneView?.init("100806") //init list ZoneView 102110 101930 100806
@@ -65,6 +65,8 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             addItemText.text.clear()
 
             //dynamicZoneView?.init("100806")
+            //dynamicZoneView?.onStart(this) THIS CAN BE CALLED WHENEVER ITS CREATED
+            //dynamicZoneView?.onStop(this) THIS SHOULD BE CALLED IN ON STOP
             //layout.addView(dynamicZoneView)
         }
 
