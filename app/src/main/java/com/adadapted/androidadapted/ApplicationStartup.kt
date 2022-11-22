@@ -19,8 +19,8 @@ class ApplicationStartup: Application() {
 
         //AdAdapted.INSTANCE.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("846ACA0X62F13A62") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0
-            .inEnv(AdAdapted.Env.DEV)
+            .withAppId("NTKXMZFJZTA2NMZJ") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0
+            .inEnv(AdAdapted.Env.PROD)
             .setSdkSessionListener(object : AaSdkSessionListener {
                 override fun onHasAdsToServe(hasAds: Boolean) {
                     Log.i(tag, "Has Ads To Serve: $hasAds")

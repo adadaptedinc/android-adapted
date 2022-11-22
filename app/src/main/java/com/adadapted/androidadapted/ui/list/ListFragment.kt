@@ -42,8 +42,11 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val addButton = binding.addButton
         val addItemText = binding.addItemText
 
+//        val layout = binding.layout
+//        val dynamicZoneView = this.context?.let { AaZoneView(it) }
+
         listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("102110") //init list ZoneView 102110 101930
+        listAdZoneView?.init("100806") //init list ZoneView 102110 101930 100806
         addButton.isVisible = false
         clearButton.isVisible = false
 
@@ -60,6 +63,9 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         addButton.setOnClickListener {
             adapter?.addItem(addItemText.text.toString())
             addItemText.text.clear()
+
+            //dynamicZoneView?.init("100806")
+            //layout.addView(dynamicZoneView)
         }
 
         clearButton.setOnClickListener {
