@@ -24,8 +24,9 @@ class ApplicationStartup : Application() {
             .enableKeywordIntercept(true)
             .enableDebugLogging()
             .setSdkSessionListener(object: SessionBroadcastListener {
-                override fun onHasAdsToServe(hasAds: Boolean) {
+                override fun onHasAdsToServe(hasAds: Boolean, availableZoneIds: List<String>) {
                     Log.i(tag, "Has Ads To Serve: $hasAds")
+                    Log.i(tag, "The following zones have ads to serve: $availableZoneIds")
                 }
             })
             .setSdkEventListener(object: EventBroadcastListener {
