@@ -22,8 +22,9 @@ class ApplicationStartup: Application() {
             .withAppId("NTKXMZFJZTA2NMZJ") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0
             .inEnv(AdAdapted.Env.PROD)
             .setSdkSessionListener(object : AaSdkSessionListener {
-                override fun onHasAdsToServe(hasAds: Boolean) {
+                override fun onHasAdsToServe(hasAds: Boolean, availableZoneIds: List<String>) {
                     Log.i(tag, "Has Ads To Serve: $hasAds")
+                    Log.i(tag, "The following zones have ads to serve: $availableZoneIds")
                 }
             })
             .setSdkEventListener(object : AaSdkEventListener {
