@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.ads:ads-identifier:1.0.0-alpha04'
     implementation 'com.google.guava:guava:28.0-android'
     implementation 'com.adadapted:aamsdk:1.0.2' // local KMM lib
+    //implementation 'com.adadapted:aamsdk-android:1.0.2' //external KMM lib
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
