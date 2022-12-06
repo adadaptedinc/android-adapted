@@ -11,7 +11,3 @@ Official documentation for integrating the SDK libraries can be found at [https:
 ### Installing
 
 Simply clone the repository and load it up into Android Studio with the required plugins and updates. The app is supplied already with a test API key that is used for a suite of test ads and keywords to interact with.
-
-## Acknowledgments
-
-* [README Template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
