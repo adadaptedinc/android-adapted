@@ -22,6 +22,7 @@ class ApplicationStartup : Application() {
             .withAppId("7D58810X6333241C") // #YOUR API KEY GOES HERE#  //NWY0NTM2YZDMMDQ0 test //new plat  NWZHZWYWN2U2ODBH //new plat KI NTKXMZFJZTA2NMZJ 846ACA0X62F13A62
             .inEnvironment(AdAdaptedEnv.DEV)
             .enableKeywordIntercept(true)
+            .enablePayloads(true)
             .enableDebugLogging()
             .setSdkSessionListener(object: SessionBroadcastListener {
                 override fun onHasAdsToServe(hasAds: Boolean, availableZoneIds: List<String>) {
