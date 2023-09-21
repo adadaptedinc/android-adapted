@@ -46,7 +46,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         val dynamicZoneView = this.context?.let { AaZoneView(it) }
 
         listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("100806") //init list ZoneView 102110 101930 100806
+        listAdZoneView?.init("102110") //init list ZoneView 102110 101930 100806
         addButton.isVisible = false
         clearButton.isVisible = false
 
