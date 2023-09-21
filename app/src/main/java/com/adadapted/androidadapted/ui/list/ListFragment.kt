@@ -55,7 +55,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         AddToListItemCache.items.observe(viewLifecycleOwner, atlItemObserver)
 
         listAdZoneView = binding.listAdZoneView
-        listAdZoneView?.init("102110") //init list ZoneView 100804 101930 //102110
+        listAdZoneView?.init("102143") //init list ZoneView 100804 101930 //102110
         addButton.isVisible = false
         clearButton.isVisible = false
 
