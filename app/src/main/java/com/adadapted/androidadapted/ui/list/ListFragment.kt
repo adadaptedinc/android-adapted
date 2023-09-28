@@ -1,6 +1,6 @@
 package com.adadapted.androidadapted.ui.list
 
-import android.R
+import android.R.layout.select_dialog_item
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -137,7 +137,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
 
     private fun setupAutoComplete(addItemText: AutoCompleteTextView) {
         val autoCompleteItems = mutableListOf("Milk", "Eggs", "Cheese", "Bread")
-        val arrayAdapter = this.context?.let { AutoCompleteAdapter(it, R.layout.select_dialog_item, autoCompleteItems) }
+        val arrayAdapter = this.context?.let { AutoCompleteAdapter(it, select_dialog_item, autoCompleteItems) }
 
         addItemText.threshold = 3
         addItemText.setAdapter(arrayAdapter)
