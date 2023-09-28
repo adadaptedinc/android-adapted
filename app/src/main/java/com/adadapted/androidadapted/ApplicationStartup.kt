@@ -6,9 +6,9 @@ import android.widget.Toast
 import com.adadapted.android.sdk.AdAdapted
 import com.adadapted.android.sdk.core.atl.AddToListContent
 import com.adadapted.android.sdk.core.atl.AddToListItem
-import com.adadapted.android.sdk.ui.messaging.AaSdkAdditContentListener
-import com.adadapted.android.sdk.ui.messaging.AaSdkEventListener
-import com.adadapted.android.sdk.ui.messaging.AaSdkSessionListener
+import com.adadapted.android.sdk.core.interfaces.AaSdkAdditContentListener
+import com.adadapted.android.sdk.core.interfaces.AaSdkEventListener
+import com.adadapted.android.sdk.core.interfaces.AaSdkSessionListener
 import java.util.Locale
 
 class ApplicationStartup: Application() {
@@ -20,6 +20,7 @@ class ApplicationStartup: Application() {
         AdAdapted
             .withAppId("7D58810X6333241C") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0
             .inEnv(AdAdapted.Env.DEV)
+            .enableKeywordIntercept(true)
             .setSdkSessionListener(object : AaSdkSessionListener {
                 override fun onHasAdsToServe(hasAds: Boolean, availableZoneIds: List<String>) {
                     Log.i(tag, "Has Ads To Serve: $hasAds")

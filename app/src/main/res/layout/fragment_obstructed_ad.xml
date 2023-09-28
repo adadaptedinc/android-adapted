@@ -19,7 +19,7 @@
                 android:layout_height="800dp"
                 android:src="@drawable/longimage" />
 
-            <com.adadapted.android.sdk.ui.view.AaZoneView
+            <com.adadapted.android.sdk.core.view.AaZoneView
                 android:id="@+id/obstructed_adZoneView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
