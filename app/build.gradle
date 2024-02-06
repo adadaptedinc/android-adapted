@@ -56,8 +56,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'androidx.ads:ads-identifier:1.0.0-alpha04'
     implementation 'com.google.guava:guava:28.0-android'
-    //implementation 'com.github.adadaptedinc:android-sdk:3.4.5'
-    implementation 'com.adadapted:android-sdk:4.0.0'//maven local
+    implementation 'com.github.adadaptedinc:android-sdk:4.0.1'
+    //implementation 'com.gitlab.adadapted:android-sdk:3.5.0'//maven local
+    //implementation 'com.adadapted:android-sdk:4.0.0'//maven local
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

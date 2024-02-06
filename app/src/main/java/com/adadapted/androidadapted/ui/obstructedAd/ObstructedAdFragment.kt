@@ -9,6 +9,7 @@ import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.adadapted.android.sdk.core.view.AaZoneView
+//import com.adadapted.android.sdk.ui.view.AaZoneView
 import com.adadapted.androidadapted.databinding.FragmentObstructedAdBinding
 
 class ObstructedAdFragment : Fragment() {

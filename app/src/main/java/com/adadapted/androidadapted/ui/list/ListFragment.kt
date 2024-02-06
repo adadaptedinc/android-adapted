@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -18,8 +19,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.adadapted.android.sdk.AdAdaptedListManager
 import com.adadapted.android.sdk.core.ad.AdContentListener
 import com.adadapted.android.sdk.core.atl.AddToListContent
+//import com.adadapted.android.sdk.ui.adapter.AutoCompleteAdapter
 import com.adadapted.android.sdk.core.view.AaZoneView
 import com.adadapted.android.sdk.core.view.AutoCompleteAdapter
+//import com.adadapted.android.sdk.ui.messaging.AdContentListener
+//import com.adadapted.android.sdk.ui.view.AaZoneView
 
 class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContentListener {
 
@@ -48,6 +52,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
 
         listAdZoneView = binding.listAdZoneView
         listAdZoneView?.init("102110") //init list ZoneView 102110 101930 100806
+        listAdZoneView?.enableAdaptiveSizing(true) //Sets MatchParent
         addButton.isVisible = false
         clearButton.isVisible = false
 
@@ -64,6 +69,9 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         addButton.setOnClickListener {
             adapter?.addItem(addItemText.text.toString())
             addItemText.text.clear()
+
+            //testing sizing
+            listAdZoneView?.resizeAdZoneView(ViewGroup.LayoutParams.MATCH_PARENT, 120)
 
             //dynamicZoneView?.init("100806")
             //dynamicZoneView?.onStart(this) THIS CAN BE CALLED WHENEVER ITS CREATED
