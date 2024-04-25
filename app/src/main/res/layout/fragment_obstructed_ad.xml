@@ -16,7 +16,7 @@
             <ImageView
                 android:id="@+id/obstruction_image"
                 android:layout_width="match_parent"
-                android:layout_height="800dp"
+                android:layout_height="900dp"
                 android:src="@drawable/longimage" />
 
             <com.adadapted.android.sdk.core.view.AaZoneView
