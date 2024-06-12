@@ -120,6 +120,11 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
         }
     }
 
+    override fun onNonContentAction(zoneId: String, adId: String) {
+        var zoneCheck = zoneId
+        var adCheck = adId
+    }
+
     override fun onItemClick(view: View?, position: Int) {
         Toast.makeText(this.context, "You clicked " + adapter?.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show()
     }
