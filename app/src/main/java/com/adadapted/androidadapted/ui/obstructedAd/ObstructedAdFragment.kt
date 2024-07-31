@@ -75,7 +75,7 @@ class ObstructedAdFragment : Fragment() {
         programmaticAdZoneView1?.init("102110")
         programmaticAdZoneView1?.setAdZoneVisibility(false)
 
-        programmaticAdZoneView2?.init("102110")
+        programmaticAdZoneView2?.init("110002")
         programmaticAdZoneView2?.setAdZoneVisibility(false)
 
         val linearLayout = binding.linearLayout
