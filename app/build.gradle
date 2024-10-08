@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.google.guava:guava:28.0-android'
     //implementation 'com.github.adadaptedinc:android-sdk:4.0.3'
     //implementation 'com.gitlab.adadapted:android-sdk:3.5.0'//maven local old
-    implementation 'com.adadapted:android-sdk:4.0.10'//maven local
+    implementation 'com.adadapted:android-sdk:4.0.12'//maven local
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
