@@ -160,7 +160,7 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             if (item != null) {
                 adapter?.addItem(item)
                 arrayAdapter.suggestionSelected(item)
-                AdAdaptedListManager.itemAddedToList(item)
+                AdAdaptedListManager.itemAddedToList(item = item)
             }
             addItemText.text.clear()
         }

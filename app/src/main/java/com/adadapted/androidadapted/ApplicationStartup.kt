@@ -24,6 +24,7 @@ class ApplicationStartup: Application() {
             .withAppId("7D58810X6333241C") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0
             .inEnv(AdAdapted.Env.DEV)
             .enableKeywordIntercept(true)
+            .enableDebugLogging()
             .setSdkSessionListener(object : AaSdkSessionListener {
                 override fun onHasAdsToServe(hasAds: Boolean, availableZoneIds: List<String>) {
                     Log.i(tag, "Has Ads To Serve: $hasAds")
