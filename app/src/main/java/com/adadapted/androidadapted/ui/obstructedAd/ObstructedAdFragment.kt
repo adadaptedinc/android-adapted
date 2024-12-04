@@ -1,19 +1,16 @@
 package com.adadapted.androidadapted.ui.obstructedAd
 
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.adadapted.android.sdk.core.view.AaZoneView
 import com.adadapted.androidadapted.R
-//import com.adadapted.android.sdk.ui.view.AaZoneView
 import com.adadapted.androidadapted.databinding.FragmentObstructedAdBinding
 
 class ObstructedAdFragment : Fragment() {
@@ -65,17 +62,21 @@ class ObstructedAdFragment : Fragment() {
         }
 
         obstructedAdZoneView = _binding?.obstructedAdZoneView
-        obstructedAdZoneView?.init("102110")
+        obstructedAdZoneView?.init("101990") //102110 101990
+        obstructedAdZoneView?.enableFixedAspectRatio(true)
         obstructedAdZoneView?.setAdZoneVisibility(false)
 
         //manual creation zones
         programmaticAdZoneView1 = AaZoneView(context = root.context)
         programmaticAdZoneView2 = AaZoneView(context = root.context)
 
-        programmaticAdZoneView1?.init("102110")
+        programmaticAdZoneView1?.init("102166") //110002 102166
+        //programmaticAdZoneView1?.enableFixedAspectRatio(true)
         programmaticAdZoneView1?.setAdZoneVisibility(false)
+        //programmaticAdZoneView1?.resizeAdZoneView(1200, 260)
 
-        programmaticAdZoneView2?.init("110002")
+        programmaticAdZoneView2?.init("102166") //110003 101990
+        programmaticAdZoneView2?.enableFixedAspectRatio(true)
         programmaticAdZoneView2?.setAdZoneVisibility(false)
 
         val linearLayout = binding.linearLayout

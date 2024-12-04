@@ -70,9 +70,6 @@ class ListFragment : Fragment(),ListRecyclerAdapter.ItemClickListener, AdContent
             adapter?.addItem(addItemText.text.toString())
             addItemText.text.clear()
 
-            //testing sizing
-            listAdZoneView?.resizeAdZoneView(ViewGroup.LayoutParams.MATCH_PARENT, 120)
-
             //dynamicZoneView?.init("100806")
             //dynamicZoneView?.onStart(this) THIS CAN BE CALLED WHENEVER ITS CREATED
             //dynamicZoneView?.onStop(this) THIS SHOULD BE CALLED IN ON STOP

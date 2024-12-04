@@ -21,7 +21,7 @@ class ApplicationStartup: Application() {
         val tag = "AADroid"
         //AdAdapted.INSTANCE.disableAdTracking(this); //Disable ad tracking completely
         AdAdapted
-            .withAppId("7D58810X6333241C") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0
+            .withAppId("NJIXNMRHZDC5ODCY") // #YOUR API KEY GOES HERE# 846ACA0X62F13A62 NWY0NTM2YZDMMDQ0 NJIXNMRHZDC5ODCY - flipp
             .inEnv(AdAdapted.Env.DEV)
             .enableKeywordIntercept(true)
             .enableDebugLogging()
