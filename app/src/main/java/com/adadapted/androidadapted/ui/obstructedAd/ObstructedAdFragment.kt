@@ -62,21 +62,21 @@ class ObstructedAdFragment : Fragment() {
         }
 
         obstructedAdZoneView = _binding?.obstructedAdZoneView
-        obstructedAdZoneView?.init("101990") //102110 101990
-        obstructedAdZoneView?.configureFixedAspectRatio(true)
+        obstructedAdZoneView?.init("102110") //102110 101990
+        //obstructedAdZoneView?.configureFixedAspectRatio(true)
         obstructedAdZoneView?.setAdZoneVisibility(false)
 
         //manual creation zones
         programmaticAdZoneView1 = AaZoneView(context = root.context)
         programmaticAdZoneView2 = AaZoneView(context = root.context)
 
-        programmaticAdZoneView1?.init("102166") //110002 102166
+        programmaticAdZoneView1?.init("102110") //110002 102166
         //programmaticAdZoneView1?.enableFixedAspectRatio(true)
         programmaticAdZoneView1?.setAdZoneVisibility(false)
         //programmaticAdZoneView1?.resizeAdZoneView(1200, 260)
 
-        programmaticAdZoneView2?.init("102166") //110003 101990
-        programmaticAdZoneView2?.configureFixedAspectRatio(true)
+        programmaticAdZoneView2?.init("102110") //110003 101990
+        //programmaticAdZoneView2?.configureFixedAspectRatio(true)
         programmaticAdZoneView2?.setAdZoneVisibility(false)
 
         val linearLayout = binding.linearLayout
