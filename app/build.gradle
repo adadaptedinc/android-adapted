@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -5,13 +7,13 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk = 36
     namespace 'com.adadapted.androidadapted'
 
     defaultConfig {
         applicationId "com.adadapted.androidadapted"
         minSdk 28
-        targetSdk 35
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 
@@ -30,11 +32,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    kotlin {
+        jvmToolchain(17)
     }
 
     buildFeatures {
@@ -58,7 +61,7 @@ dependencies {
     implementation 'com.google.guava:guava:28.0-android'
     //implementation 'com.github.adadaptedinc:android-sdk:4.0.3'
     //implementation 'com.gitlab.adadapted:android-sdk:3.5.0'//maven local old
-    implementation 'com.adadapted:android-sdk:5.0.0'//maven local
+    implementation 'com.adadapted:android-sdk:4.2.0'//maven local
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

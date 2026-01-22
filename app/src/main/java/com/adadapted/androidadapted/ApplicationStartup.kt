@@ -8,6 +8,7 @@ import com.adadapted.android.sdk.core.atl.AddToListContent
 import com.adadapted.android.sdk.core.atl.AddToListItem
 import com.adadapted.android.sdk.core.interfaces.AaSdkAdditContentListener
 import com.adadapted.android.sdk.core.interfaces.AaSdkEventListener
+import com.adadapted.android.sdk.core.interfaces.AaSdkSessionListener
 //import com.adadapted.android.sdk.ui.messaging.AaSdkAdditContentListener
 //import com.adadapted.android.sdk.ui.messaging.AaSdkEventListener
 //import com.adadapted.android.sdk.ui.messaging.AaSdkSessionListener
@@ -24,6 +25,15 @@ class ApplicationStartup: Application() {
             .inEnv(AdAdapted.Env.DEV)
             .enableKeywordIntercept(true)
             .enableDebugLogging()
+            .setSdkSessionListener(object: AaSdkSessionListener {
+                override fun onHasAdsToServe(
+                    hasAds: Boolean,
+                    availableZoneIds: List<String>
+                ) {
+                    //empty
+                }
+
+            })
             .setSdkEventListener(object : AaSdkEventListener {
                 override fun onNextAdEvent(zoneId: String, eventType: String) {
                     Log.i(tag, "Ad $eventType for Zone $zoneId")
