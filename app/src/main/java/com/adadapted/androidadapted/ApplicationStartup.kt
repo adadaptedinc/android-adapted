@@ -1,6 +1,8 @@
 package com.adadapted.androidadapted
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.adadapted.android.sdk.AdAdapted
@@ -12,6 +14,7 @@ import java.util.Locale
 
 class ApplicationStartup: Application() {
 
+class ApplicationStartup : Application() {
     override fun onCreate() {
         super.onCreate()
         val tag = "AADroid"
@@ -35,18 +38,19 @@ class ApplicationStartup: Application() {
                     Log.i(tag, "Ad $eventType for Zone $zoneId")
                 }
             })
-            .setSdkAdditContentListener(object : AaSdkAdditContentListener {
+            .setSdkAddItContentListener(object: AddItContentListener{
                 override fun onContentAvailable(content: AddToListContent) {
-                    val listItems: List<AddToListItem> = content.getItems()
-                    Toast.makeText(
-                                applicationContext,
-                                String.format(
-                                    Locale.ENGLISH,
-                                    "%d item(s) received from payload or circular.",
-                                    listItems.size
-                                ),
-                                Toast.LENGTH_LONG
-                            ).show()
+                    val listItems = content.getItems()
+                    content.itemAcknowledge(listItems.first())
+                    content.acknowledge()
+
+                    Handler(Looper.getMainLooper()).post {
+                        for (item in listItems) {
+                            AddToListItemCache.holdingItems.add(item)
+                        }
+                        AddToListItemCache.takeHoldingItems()
+                        Toast.makeText(applicationContext, "Received item: " + listItems.first().title, Toast.LENGTH_SHORT).show()
+                    }
                 }
             })
             .start(this)

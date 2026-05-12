@@ -50,7 +50,7 @@
                 <data
                     android:host="adadapted.com"
                     android:pathPrefix="/"
-                    android:scheme="droidrecipe" />
+                    android:scheme="androidadapted" />
 
             </intent-filter>
         </activity>
