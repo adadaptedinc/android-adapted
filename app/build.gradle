@@ -40,7 +40,6 @@ android {
     buildFeatures {
         compose true
     }
-    namespace 'com.adadapted.androidadapted'
 }
 
 dependencies {
