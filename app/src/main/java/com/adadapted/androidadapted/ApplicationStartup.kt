@@ -8,10 +8,6 @@ import com.adadapted.android.sdk.core.atl.AddToListContent
 import com.adadapted.android.sdk.core.atl.AddToListItem
 import com.adadapted.android.sdk.core.interfaces.AaSdkAdditContentListener
 import com.adadapted.android.sdk.core.interfaces.AaSdkEventListener
-//import com.adadapted.android.sdk.core.interfaces.AaSdkSessionListener
-//import com.adadapted.android.sdk.ui.messaging.AaSdkAdditContentListener
-//import com.adadapted.android.sdk.ui.messaging.AaSdkEventListener
-//import com.adadapted.android.sdk.ui.messaging.AaSdkSessionListener
 import java.util.Locale
 
 class ApplicationStartup: Application() {
