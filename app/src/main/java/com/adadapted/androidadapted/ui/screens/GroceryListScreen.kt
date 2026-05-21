@@ -32,6 +32,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -68,6 +70,7 @@ fun GroceryListScreen(onBack: () -> Unit) {
     var inputText by remember { mutableStateOf("") }
     var currentSuggestions by remember { mutableStateOf<List<Suggestion>>(emptyList()) }
     var zoneView by remember { mutableStateOf<AaZoneView?>(null) }
+    var useOriginalContext by remember { mutableStateOf(false) }
 
     val contentListener = remember {
         object : AdContentListener {
@@ -101,6 +104,32 @@ fun GroceryListScreen(onBack: () -> Unit) {
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = Color.White
+                        )
+                    }
+                },
+                actions = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Text(
+                            text = if (useOriginalContext) "Recipe Context On" else "Recipe Context Off",
+                            color = Color.White,
+                            fontSize = 12.sp
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Switch(
+                            checked = useOriginalContext,
+                            onCheckedChange = { checked ->
+                                useOriginalContext = checked
+                                zoneView?.setAdZoneContextId(if (checked) "original" else "")
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = GroceryGreen,
+                                uncheckedThumbColor = Color.White,
+                                uncheckedTrackColor = Color.Gray
+                            )
                         )
                     }
                 },
@@ -268,6 +297,7 @@ fun GroceryListScreen(onBack: () -> Unit) {
                 factory = { ctx ->
                     AaZoneView(ctx).apply {
                         init("102110")
+                        setAdZoneContextId("")
                         enableAdaptiveSizing(true)
                         onStart(contentListener)
                         zoneView = this
