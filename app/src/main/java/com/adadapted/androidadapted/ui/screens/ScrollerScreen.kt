@@ -1,5 +1,6 @@
 package com.adadapted.androidadapted.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,11 +33,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.adadapted.android.sdk.core.ad.AdContentListener
+import com.adadapted.android.sdk.core.atl.AddToListContent
 import com.adadapted.android.sdk.core.view.AaZoneView
 import com.adadapted.androidadapted.ui.theme.AAPurpleDark
 import com.adadapted.androidadapted.ui.theme.AAPurpleMid
 import com.adadapted.androidadapted.ui.theme.AATealLight
 import com.adadapted.androidadapted.ui.theme.ScrollerBlue
+
+private const val TAG = "AA Scroller"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +49,19 @@ fun ScrollerScreen(onBack: () -> Unit) {
     val totalItems = 24
     val zoneViews = remember { mutableStateMapOf<Int, AaZoneView>() }
     val listState = rememberLazyListState()
+
+    val contentListener = remember {
+        object : AdContentListener {
+            override fun onContentAvailable(zoneId: String, content: AddToListContent) {
+                Log.d(TAG, "Content available for zone: $zoneId, items: ${content.getItems().size}")
+                content.acknowledge()
+            }
+
+            override fun onNonContentAction(zoneId: String, adId: String) {
+                Log.d(TAG, "Non-content action for zone: $zoneId, ad: $adId")
+            }
+        }
+    }
 
     LaunchedEffect(listState) {
         snapshotFlow {
@@ -95,15 +113,15 @@ fun ScrollerScreen(onBack: () -> Unit) {
                 .padding(horizontal = 16.dp),
         ) {
             items(totalItems) { index ->
-                val isAdCell = index % 6 == 0
+                val isAdCell = index % 8 == 0
 
                 if (isAdCell) {
                     AndroidView(
                         factory = { ctx ->
                             AaZoneView(ctx).apply {
                                 init("102110")
-                                onStart()
-                                setAdZoneVisibility(true)
+                                setAdZoneVisibility(false)
+                                onStart(contentListener)
                                 zoneViews[index] = this
                             }
                         },
