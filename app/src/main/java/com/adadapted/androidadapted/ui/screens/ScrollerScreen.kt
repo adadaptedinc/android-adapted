@@ -103,9 +103,13 @@ fun ScrollerScreen(onBack: () -> Unit) {
                             AaZoneView(ctx).apply {
                                 init("102110")
                                 onStart()
-                                setAdZoneVisibility(false)
+                                setAdZoneVisibility(true)
                                 zoneViews[index] = this
                             }
+                        },
+                        update = { view ->
+                            val isVisible = listState.layoutInfo.visibleItemsInfo.any { it.index == index }
+                            view.setAdZoneVisibility(isVisible)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -116,8 +120,6 @@ fun ScrollerScreen(onBack: () -> Unit) {
                         onReset = null,
                         onRelease = { view ->
                             view.setAdZoneVisibility(false)
-                            view.onStop()
-                            zoneViews.values.remove(view)
                         }
                     )
                 } else {
