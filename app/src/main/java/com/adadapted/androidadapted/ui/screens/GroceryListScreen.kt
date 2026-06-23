@@ -298,7 +298,6 @@ fun GroceryListScreen(onBack: () -> Unit) {
                     AaZoneView(ctx).apply {
                         init("102110")
                         setAdZoneContextId("")
-                        enableAdaptiveSizing(true)
                         onStart(contentListener)
                         zoneView = this
                     }

@@ -62,7 +62,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
 
     // AdAdapted SDK
-    implementation 'com.adadapted:android-sdk:5.0.0'
+    //implementation 'com.adadapted:android-sdk:5.0.0' //Local Sdk
+    implementation 'com.github.adadaptedinc:android-sdk:5.0.0' //Live Sdk
 
     // Firebase
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'

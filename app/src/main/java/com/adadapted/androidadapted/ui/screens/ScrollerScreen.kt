@@ -118,12 +118,12 @@ fun ScrollerScreen(onBack: () -> Unit) {
                 if (isAdCell) {
                     AndroidView(
                         factory = { ctx ->
-                            AaZoneView(ctx).apply {
-                                init("102110")
-                                setAdZoneVisibility(false)
-                                onStart(contentListener)
-                                zoneViews[index] = this
-                            }
+                            zoneViews.getOrPut(index) {
+                                AaZoneView(ctx).apply {
+                                    init("102110")
+                                    onStart(contentListener)
+                                }
+                            }.also { it.setAdZoneVisibility(false) }
                         },
                         update = { view ->
                             val isVisible = listState.layoutInfo.visibleItemsInfo.any { it.index == index }
