@@ -9,4 +9,63 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "AndroidAdapted"
+
+// ---------------------------------------------------------------------------
+// Local AdAdapted SDK (composite build)
+//
+// When the android-sdk repo is checked out as a sibling of this project, we
+// wire it in as a Gradle composite build so you can see and edit all SDK
+// sources directly from this project, with changes picked up instantly on the
+// next build -- no `maven publish` / jitpack round-trip required.
+//
+// Behaviour:
+//   * Path defaults to ../android-sdk, and is overridable per-developer via
+//     `adadapted.sdk.path` in local.properties (gitignored, not shared).
+//   * If the path is missing it is auto-cloned from GitHub.
+//   * If cloning is unavailable/opted out, we silently fall back to the
+//     published artifact declared in app/build.gradle.
+//
+// To opt OUT of local source on a given machine, set in local.properties:
+//   adadapted.sdk.local=false
+// ---------------------------------------------------------------------------
+def localProp = { String key ->
+    def f = new File(rootDir, 'local.properties')
+    if (!f.exists()) return null
+    def props = new Properties()
+    f.withInputStream { props.load(it) }
+    return props.getProperty(key)?.trim()
+}
+
+def sdkRepoUrl = 'https://github.com/adadaptedinc/android-sdk.git'
+def useLocalSdk = !'false'.equalsIgnoreCase(localProp('adadapted.sdk.local') ?: 'true')
+def sdkPathProp = localProp('adadapted.sdk.path') ?: '../android-sdk'
+def sdkDir = new File(sdkPathProp).absolute ? new File(sdkPathProp) : new File(rootDir, sdkPathProp)
+
+if (useLocalSdk) {
+    if (!sdkDir.exists()) {
+        println "[adadapted-sdk] Local SDK not found at ${sdkDir.canonicalPath} -- cloning from ${sdkRepoUrl} ..."
+        sdkDir.parentFile.mkdirs()
+        def clone = ['git', 'clone', sdkRepoUrl, sdkDir.absolutePath].execute()
+        clone.consumeProcessOutput(System.out, System.err)
+        clone.waitFor()
+        if (clone.exitValue() != 0) {
+            println "[adadapted-sdk] Clone failed -- falling back to the published artifact."
+        }
+    }
+
+    if (sdkDir.exists()) {
+        println "[adadapted-sdk] Building against local SDK source at ${sdkDir.canonicalPath}"
+        includeBuild(sdkDir) {
+            dependencySubstitution {
+                // Substitute both the live (jitpack) and local maven coordinates
+                // so app/build.gradle needs no changes.
+                substitute module('com.github.adadaptedinc:android-sdk') using project(':advertising_sdk')
+                substitute module('com.adadapted:android-sdk') using project(':advertising_sdk')
+            }
+        }
+    }
+} else {
+    println "[adadapted-sdk] adadapted.sdk.local=false -- using the published SDK artifact."
+}
+
 include ':app'

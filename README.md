@@ -11,3 +11,41 @@ Official documentation for integrating the SDK libraries can be found at [https:
 ### Installing
 
 Simply clone the repository and load it up into Android Studio with the required plugins and updates. The app is supplied already with a test API key that is used for a suite of test ads and keywords to interact with.
+
+### Developing against the SDK source (local composite build)
+
+By default this app pulls the **published** AdAdapted SDK artifact. If you want to
+read and edit the SDK source directly from this project, check out the
+[`android-sdk`](https://github.com/adadaptedinc/android-sdk) repo as a **sibling
+folder** of this one:
+
+```
+GitHub/
+├── android-adapted/   <- this project
+└── android-sdk/       <- SDK source
+```
+
+When `../android-sdk` is present, `settings.gradle` automatically wires it in as a
+Gradle [composite build](https://docs.gradle.org/current/userguide/composite_builds.html):
+the SDK modules show up in the Android Studio project view (fully editable), and
+any change is compiled straight into the app on the next build — no
+`maven publish` / JitPack round-trip.
+
+**You don't have to clone it yourself** — if the folder is missing, the first
+Gradle sync auto-clones it from GitHub for you.
+
+Configuration (all optional, per-developer, via the gitignored `local.properties`):
+
+| Property | Default | Purpose |
+|----------|---------|---------|
+| `adadapted.sdk.local` | `true` | Set to `false` to force the published artifact and ignore any local checkout. |
+| `adadapted.sdk.path`  | `../android-sdk` | Point at a different location for the SDK checkout (absolute or relative to this project). |
+
+> Composite builds require a single Android Gradle Plugin version across both
+> projects. This app is aligned to the SDK's AGP version; if you bump one, bump
+> the other.
+
+> **Gradle JDK:** the current AGP requires the Gradle daemon to run on **JDK 17
+> or newer**. If Android Studio reports *"Gradle JVM version incompatible"*, set
+> **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK**
+> to the embedded JBR (or any JDK 17+) and re-sync.
