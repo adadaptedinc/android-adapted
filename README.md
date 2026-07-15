@@ -34,6 +34,29 @@ any change is compiled straight into the app on the next build — no
 **You don't have to clone it yourself** — if the folder is missing, the first
 Gradle sync auto-clones it from GitHub for you.
 
+#### Keeping the local SDK up to date
+
+The auto-clone is a **one-time bootstrap, not a sync** — it only runs when the
+folder is absent. Once `../android-sdk` exists, Gradle builds against whatever is
+checked out there and **never updates it for you**. Two consequences:
+
+- The `com.github.adadaptedinc:android-sdk:5.0.0` version in `app/build.gradle`
+  is **ignored** in local mode — the composite build substitutes it for your
+  on-disk source regardless of the version string. When the SDK is tagged, say,
+  `5.1.0`, you will *not* pick it up until you update the checkout yourself:
+
+  ```
+  cd ../android-sdk && git pull
+  ```
+
+- To make the version string meaningful again (i.e. consume the published
+  artifact), set `adadapted.sdk.local=false` in `local.properties` and bump the
+  version in `app/build.gradle`.
+
+Each sync prints the checked-out SDK revision, e.g.
+`Building against local SDK source at … (5.0.0)` or `… (5.0.0-4-g1a2b3c-dirty)`,
+so a stale checkout is visible at a glance.
+
 Configuration (all optional, per-developer, via the gitignored `local.properties`):
 
 | Property | Default | Purpose |

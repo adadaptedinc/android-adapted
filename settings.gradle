@@ -41,20 +41,43 @@ def useLocalSdk = !'false'.equalsIgnoreCase(localProp('adadapted.sdk.local') ?: 
 def sdkPathProp = localProp('adadapted.sdk.path') ?: '../android-sdk'
 def sdkDir = new File(sdkPathProp).absolute ? new File(sdkPathProp) : new File(rootDir, sdkPathProp)
 
+// Best-effort description of the checked-out SDK revision (nearest tag, else short
+// hash, with a `-dirty` suffix for uncommitted changes). Purely informational so a
+// stale local checkout is visible in the sync log -- never fails the build.
+def sdkRef = { File dir ->
+    try {
+        def p = ['git', '-C', dir.absolutePath, 'describe', '--tags', '--always', '--dirty'].execute()
+        p.waitFor()
+        return p.exitValue() == 0 ? p.text.trim() : null
+    } catch (Exception ignored) {
+        return null
+    }
+}
+
 if (useLocalSdk) {
     if (!sdkDir.exists()) {
         println "[adadapted-sdk] Local SDK not found at ${sdkDir.canonicalPath} -- cloning from ${sdkRepoUrl} ..."
-        sdkDir.parentFile.mkdirs()
-        def clone = ['git', 'clone', sdkRepoUrl, sdkDir.absolutePath].execute()
-        clone.consumeProcessOutput(System.out, System.err)
-        clone.waitFor()
-        if (clone.exitValue() != 0) {
-            println "[adadapted-sdk] Clone failed -- falling back to the published artifact."
+        try {
+            sdkDir.parentFile.mkdirs()
+            def clone = ['git', 'clone', sdkRepoUrl, sdkDir.absolutePath].execute()
+            clone.consumeProcessOutput(System.out, System.err)
+            clone.waitFor()
+            if (clone.exitValue() != 0) {
+                println "[adadapted-sdk] Clone failed -- falling back to the published artifact."
+                sdkDir.deleteDir()
+            }
+        } catch (Exception e) {
+            // e.g. git not installed / not on PATH -- don't break the build,
+            // just fall back to the published artifact.
+            println "[adadapted-sdk] Could not clone SDK (${e.message}) -- falling back to the published artifact."
+            sdkDir.deleteDir()
         }
     }
 
     if (sdkDir.exists()) {
-        println "[adadapted-sdk] Building against local SDK source at ${sdkDir.canonicalPath}"
+        def ref = sdkRef(sdkDir)
+        println "[adadapted-sdk] Building against local SDK source at ${sdkDir.canonicalPath}${ref ? " (${ref})" : ''}"
+        println "[adadapted-sdk] This checkout does NOT auto-update -- run `git pull` in it to get newer SDK versions."
         includeBuild(sdkDir) {
             dependencySubstitution {
                 // Substitute both the live (jitpack) and local maven coordinates
