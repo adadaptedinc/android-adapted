@@ -39,7 +39,7 @@ def localProp = { String key ->
 def sdkRepoUrl = 'https://github.com/adadaptedinc/android-sdk.git'
 def useLocalSdk = !'false'.equalsIgnoreCase(localProp('adadapted.sdk.local') ?: 'true')
 def sdkPathProp = localProp('adadapted.sdk.path') ?: '../android-sdk'
-def sdkDir = new File(sdkPathProp).absolute ? new File(sdkPathProp) : new File(rootDir, sdkPathProp)
+def sdkDir = new File(sdkPathProp).isAbsolute() ? new File(sdkPathProp) : new File(rootDir, sdkPathProp)
 
 // Best-effort description of the checked-out SDK revision (nearest tag, else short
 // hash, with a `-dirty` suffix for uncommitted changes). Purely informational so a
