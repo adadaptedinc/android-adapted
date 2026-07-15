@@ -56,27 +56,33 @@ def sdkRef = { File dir ->
 
 if (useLocalSdk) {
     if (!sdkDir.exists()) {
-        println "[adadapted-sdk] Local SDK not found at ${sdkDir.canonicalPath} -- cloning from ${sdkRepoUrl} ..."
-        try {
-            sdkDir.parentFile.mkdirs()
-            def clone = ['git', 'clone', sdkRepoUrl, sdkDir.absolutePath].execute()
-            clone.consumeProcessOutput(System.out, System.err)
-            clone.waitFor()
-            if (clone.exitValue() != 0) {
-                println "[adadapted-sdk] Clone failed -- falling back to the published artifact."
+        if (gradle.startParameter.offline) {
+            // Gradle is in offline mode -- don't perform network work during
+            // sync; fall back to the published artifact.
+            println "[adadapted-sdk] Local SDK not found at ${sdkDir.absolutePath} and Gradle is offline -- falling back to the published artifact."
+        } else {
+            println "[adadapted-sdk] Local SDK not found at ${sdkDir.absolutePath} -- cloning from ${sdkRepoUrl} ..."
+            try {
+                sdkDir.parentFile.mkdirs()
+                def clone = ['git', 'clone', sdkRepoUrl, sdkDir.absolutePath].execute()
+                clone.consumeProcessOutput(System.out, System.err)
+                clone.waitFor()
+                if (clone.exitValue() != 0) {
+                    println "[adadapted-sdk] Clone failed -- falling back to the published artifact."
+                    sdkDir.deleteDir()
+                }
+            } catch (Exception e) {
+                // e.g. git not installed / not on PATH -- don't break the build,
+                // just fall back to the published artifact.
+                println "[adadapted-sdk] Could not clone SDK (${e.message}) -- falling back to the published artifact."
                 sdkDir.deleteDir()
             }
-        } catch (Exception e) {
-            // e.g. git not installed / not on PATH -- don't break the build,
-            // just fall back to the published artifact.
-            println "[adadapted-sdk] Could not clone SDK (${e.message}) -- falling back to the published artifact."
-            sdkDir.deleteDir()
         }
     }
 
     if (sdkDir.exists()) {
         def ref = sdkRef(sdkDir)
-        println "[adadapted-sdk] Building against local SDK source at ${sdkDir.canonicalPath}${ref ? " (${ref})" : ''}"
+        println "[adadapted-sdk] Building against local SDK source at ${sdkDir.absolutePath}${ref ? " (${ref})" : ''}"
         println "[adadapted-sdk] This checkout does NOT auto-update -- run `git pull` in it to get newer SDK versions."
         includeBuild(sdkDir) {
             dependencySubstitution {
