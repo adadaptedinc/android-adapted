@@ -80,10 +80,9 @@ if (useLocalSdk) {
         println "[adadapted-sdk] This checkout does NOT auto-update -- run `git pull` in it to get newer SDK versions."
         includeBuild(sdkDir) {
             dependencySubstitution {
-                // Substitute both the live (jitpack) and local maven coordinates
-                // so app/build.gradle needs no changes.
+                // Substitute the JitPack coordinate declared in app/build.gradle
+                // for the local source, so no change is needed there.
                 substitute module('com.github.adadaptedinc:android-sdk') using project(':advertising_sdk')
-                substitute module('com.adadapted:android-sdk') using project(':advertising_sdk')
             }
         }
     }
