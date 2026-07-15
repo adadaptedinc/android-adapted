@@ -80,7 +80,14 @@ if (useLocalSdk) {
         }
     }
 
-    if (sdkDir.exists()) {
+    // A bare `exists()` check isn't enough: a path that exists but isn't a valid
+    // Gradle build (empty folder, a stray file, or a partial/failed clone) would
+    // make includeBuild hard-fail the sync. Require a directory with a settings
+    // file before including it; otherwise log and fall back to the published artifact.
+    def hasSettings = { File dir ->
+        new File(dir, 'settings.gradle').exists() || new File(dir, 'settings.gradle.kts').exists()
+    }
+    if (sdkDir.isDirectory() && hasSettings(sdkDir)) {
         def ref = sdkRef(sdkDir)
         println "[adadapted-sdk] Building against local SDK source at ${sdkDir.absolutePath}${ref ? " (${ref})" : ''}"
         println "[adadapted-sdk] This checkout does NOT auto-update -- run `git pull` in it to get newer SDK versions."
@@ -91,6 +98,8 @@ if (useLocalSdk) {
                 substitute module('com.github.adadaptedinc:android-sdk') using project(':advertising_sdk')
             }
         }
+    } else if (sdkDir.exists()) {
+        println "[adadapted-sdk] ${sdkDir.absolutePath} exists but is not a valid Gradle build (no settings.gradle[.kts]) -- falling back to the published artifact."
     }
 } else {
     println "[adadapted-sdk] adadapted.sdk.local=false -- using the published SDK artifact."
