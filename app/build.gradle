@@ -60,8 +60,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
 
     // AdAdapted SDK
-    //implementation 'com.adadapted:android-sdk:5.0.0' //Local Sdk
-    implementation 'com.github.adadaptedinc:android-sdk:5.0.0' //Live Sdk
+    // Resolves to the published artifact by default. When the android-sdk repo
+    // is present as a sibling checkout, settings.gradle transparently swaps this
+    // for the local :advertising_sdk source via a composite build -- no change
+    // needed here. See the "Local AdAdapted SDK" section in settings.gradle.
+    implementation 'com.github.adadaptedinc:android-sdk:5.0.0'
 
     // Firebase
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'

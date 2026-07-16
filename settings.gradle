@@ -9,4 +9,100 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "AndroidAdapted"
+
+// ---------------------------------------------------------------------------
+// Local AdAdapted SDK (composite build)
+//
+// When the android-sdk repo is checked out as a sibling of this project, we
+// wire it in as a Gradle composite build so you can see and edit all SDK
+// sources directly from this project, with changes picked up instantly on the
+// next build -- no `maven publish` / jitpack round-trip required.
+//
+// Behaviour:
+//   * Path defaults to ../android-sdk, and is overridable per-developer via
+//     `adadapted.sdk.path` in local.properties (gitignored, not shared).
+//   * If the path is missing it is auto-cloned from GitHub.
+//   * If cloning is unavailable/opted out, we silently fall back to the
+//     published artifact declared in app/build.gradle.
+//
+// To opt OUT of local source on a given machine, set in local.properties:
+//   adadapted.sdk.local=false
+// ---------------------------------------------------------------------------
+def localProp = { String key ->
+    def f = new File(rootDir, 'local.properties')
+    if (!f.exists()) return null
+    def props = new Properties()
+    f.withInputStream { props.load(it) }
+    return props.getProperty(key)?.trim()
+}
+
+def sdkRepoUrl = 'https://github.com/adadaptedinc/android-sdk.git'
+def useLocalSdk = !'false'.equalsIgnoreCase(localProp('adadapted.sdk.local') ?: 'true')
+def sdkPathProp = localProp('adadapted.sdk.path') ?: '../android-sdk'
+def sdkDir = new File(sdkPathProp).isAbsolute() ? new File(sdkPathProp) : new File(rootDir, sdkPathProp)
+
+// Best-effort description of the checked-out SDK revision (nearest tag, else short
+// hash, with a `-dirty` suffix for uncommitted changes). Purely informational so a
+// stale local checkout is visible in the sync log -- never fails the build.
+def sdkRef = { File dir ->
+    try {
+        def p = ['git', '-C', dir.absolutePath, 'describe', '--tags', '--always', '--dirty'].execute()
+        p.waitFor()
+        return p.exitValue() == 0 ? p.text.trim() : null
+    } catch (Exception ignored) {
+        return null
+    }
+}
+
+if (useLocalSdk) {
+    if (!sdkDir.exists()) {
+        if (gradle.startParameter.offline) {
+            // Gradle is in offline mode -- don't perform network work during
+            // sync; fall back to the published artifact.
+            println "[adadapted-sdk] Local SDK not found at ${sdkDir.absolutePath} and Gradle is offline -- falling back to the published artifact."
+        } else {
+            println "[adadapted-sdk] Local SDK not found at ${sdkDir.absolutePath} -- cloning from ${sdkRepoUrl} ..."
+            try {
+                sdkDir.parentFile.mkdirs()
+                def clone = ['git', 'clone', sdkRepoUrl, sdkDir.absolutePath].execute()
+                clone.consumeProcessOutput(System.out, System.err)
+                clone.waitFor()
+                if (clone.exitValue() != 0) {
+                    println "[adadapted-sdk] Clone failed -- falling back to the published artifact."
+                    sdkDir.deleteDir()
+                }
+            } catch (Exception e) {
+                // e.g. git not installed / not on PATH -- don't break the build,
+                // just fall back to the published artifact.
+                println "[adadapted-sdk] Could not clone SDK (${e.message}) -- falling back to the published artifact."
+                sdkDir.deleteDir()
+            }
+        }
+    }
+
+    // A bare `exists()` check isn't enough: a path that exists but isn't a valid
+    // Gradle build (empty folder, a stray file, or a partial/failed clone) would
+    // make includeBuild hard-fail the sync. Require a directory with a settings
+    // file before including it; otherwise log and fall back to the published artifact.
+    def hasSettings = { File dir ->
+        new File(dir, 'settings.gradle').exists() || new File(dir, 'settings.gradle.kts').exists()
+    }
+    if (sdkDir.isDirectory() && hasSettings(sdkDir)) {
+        def ref = sdkRef(sdkDir)
+        println "[adadapted-sdk] Building against local SDK source at ${sdkDir.absolutePath}${ref ? " (${ref})" : ''}"
+        println "[adadapted-sdk] This checkout does NOT auto-update -- run `git pull` in it to get newer SDK versions."
+        includeBuild(sdkDir) {
+            dependencySubstitution {
+                // Substitute the JitPack coordinate declared in app/build.gradle
+                // for the local source, so no change is needed there.
+                substitute module('com.github.adadaptedinc:android-sdk') using project(':advertising_sdk')
+            }
+        }
+    } else if (sdkDir.exists()) {
+        println "[adadapted-sdk] ${sdkDir.absolutePath} exists but is not a valid Gradle build (no settings.gradle[.kts]) -- falling back to the published artifact."
+    }
+} else {
+    println "[adadapted-sdk] adadapted.sdk.local=false -- using the published SDK artifact."
+}
+
 include ':app'
