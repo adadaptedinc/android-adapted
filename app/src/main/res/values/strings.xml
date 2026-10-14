@@ -1,3 +1,157 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">AndroidAdapted</string>
+
+    <!-- Common -->
+    <string name="add">Add</string>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="just_now">Just now</string>
+
+    <!-- Tabs -->
+    <string name="tab_lists">Lists</string>
+    <string name="tab_zone_lab">Zone Lab</string>
+    <string name="tab_activity">Activity</string>
+
+    <!-- Ad zones -->
+    <string name="zone_caption">Zone %1$s · full width × %2$d</string>
+    <string name="zone_on_screen">On screen</string>
+    <string name="zone_off_screen">Off screen</string>
+
+    <!-- Lists -->
+    <string name="lists_title">My Lists</string>
+    <string name="lists_empty_title">No lists</string>
+    <string name="lists_empty_message">Create a list to start shopping.</string>
+    <plurals name="summary_items_to_buy">
+        <item quantity="one">%d item to buy</item>
+        <item quantity="other">%d items to buy</item>
+    </plurals>
+    <plurals name="summary_across_lists">
+        <item quantity="one">across %d list</item>
+        <item quantity="other">across %d lists</item>
+    </plurals>
+    <string name="new_list">New list</string>
+    <string name="new_list_name">List name</string>
+    <string name="new_list_icon">Icon</string>
+    <string name="new_list_zone_id">Ad zone ID</string>
+    <string name="new_list_zone_help">The AdAdapted zone shown at the bottom of this list.</string>
+    <string name="new_list_zone_used_by_zone_lab">Zone Lab uses this zone. Pick another so an ad\'s items aren\'t added twice.</string>
+    <string name="list_icon_cart">Cart</string>
+    <string name="list_icon_produce">Produce</string>
+    <string name="list_icon_household">Household</string>
+    <string name="list_icon_electronics">Electronics</string>
+    <string name="list_icon_party">Party</string>
+    <string name="list_icon_takeout">Takeout</string>
+    <string name="list_options">Options for %1$s</string>
+    <string name="list_subtitle_empty">Empty</string>
+    <string name="list_subtitle_progress" tools:ignore="PluralsCandidate">%1$s left · %2$d crossed off</string>
+    <plurals name="item_count">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+    <string name="delete_list_title">Delete “%1$s”?</string>
+    <string name="delete_list_message_empty">This list is empty.</string>
+    <plurals name="delete_list_message">
+        <item quantity="one">Its %d item will be deleted too.</item>
+        <item quantity="other">Its %d items will be deleted too.</item>
+    </plurals>
+
+    <!-- Grocery list -->
+    <string name="list_missing_title">List unavailable</string>
+    <string name="list_missing_message">It may have been deleted.</string>
+    <string name="list_empty_title">Nothing on the list</string>
+    <string name="list_empty_message">Add an item above. Suggestions appear as you type.</string>
+    <string name="list_options_menu">List options</string>
+    <string name="section_to_buy">To buy</string>
+    <string name="section_crossed_off">Crossed off</string>
+    <string name="add_item_placeholder">Search or add an item…</string>
+    <string name="list_zone_caption">Ad zone %1$s</string>
+    <string name="list_zone_caption_with_context">Ad zone %1$s · context “%2$s”</string>
+    <string name="recipe_context">Recipe context</string>
+    <string name="reload_ad_zone">Reload ad zone</string>
+    <string name="clear_crossed_off">Clear crossed off</string>
+    <string name="item_cross_off_action">Cross off</string>
+    <string name="item_uncross_action">Put back on the list</string>
+    <string name="item_state_to_buy">To buy</string>
+    <string name="item_state_crossed_off">Crossed off</string>
+    <string name="item_gesture_hint">Tap to cross off · Long-press to edit · Swipe left to delete</string>
+    <string name="item_edit">Edit</string>
+    <string name="item_quantity">×%1$d</string>
+    <string name="origin_suggestion">Suggested</string>
+    <string name="origin_ad">From ad</string>
+    <string name="origin_payload">Delivered</string>
+    <string name="origin_recipe">From recipe</string>
+
+    <!-- Item editor -->
+    <string name="edit_item">Edit item</string>
+    <string name="edit_item_name">Item</string>
+    <string name="edit_item_quantity">Quantity</string>
+    <string name="edit_item_crossed_off">Crossed off</string>
+    <string name="edit_item_added_by">Added by</string>
+    <string name="edit_item_added">Added</string>
+    <string name="quantity_decrease">Decrease quantity</string>
+    <string name="quantity_increase">Increase quantity</string>
+
+    <!-- Zone Lab -->
+    <string name="zone_lab_scenarios">Scenarios</string>
+    <string name="zone_lab_configuration">SDK configuration</string>
+    <string name="scenario_scroller">Infinite Scroller</string>
+    <string name="scenario_scroller_subtitle">Recycled zones with visibility tracking</string>
+    <string name="scenario_off_screen">Off-Screen Zones</string>
+    <string name="scenario_off_screen_subtitle">Recipe page with zone context IDs and scroll visibility</string>
+    <string name="scenario_list_events">List Manager Events</string>
+    <string name="scenario_list_events_subtitle">Fire tracking events by hand</string>
+    <string name="config_app_id">App ID</string>
+    <string name="config_environment">Environment</string>
+    <string name="config_custom_identifier">Custom identifier</string>
+    <string name="config_keyword_intercept">Keyword intercept</string>
+    <string name="config_payloads">Payloads</string>
+    <string name="config_debug_logging">Debug logging</string>
+
+    <!-- Infinite scroller -->
+    <string name="scroller_ad_row">Ad row %1$d</string>
+    <string name="scroller_content_title">Content placeholder %1$d</string>
+    <string name="scroller_content_message">Filler so the ad zones above and below have to scroll in and out of view.</string>
+
+    <!-- Recipe (off-screen zones) -->
+    <string name="recipe_top_zone">Top zone</string>
+    <string name="recipe_bottom_zone">Bottom zone</string>
+    <string name="recipe_no_context">No context</string>
+    <string name="recipe_context_named">Context “%1$s”</string>
+    <string name="recipe_serves">Serves %1$d</string>
+    <string name="recipe_minutes">%1$d min</string>
+    <string name="recipe_ingredients">Ingredients</string>
+    <string name="recipe_steps">Steps</string>
+    <string name="recipe_add_ingredients">Add ingredients to my first list</string>
+    <string name="recipe_no_list">There\'s no list to add the ingredients to.</string>
+    <plurals name="recipe_ingredients_added">
+        <item quantity="one">Added %d ingredient.</item>
+        <item quantity="other">Added %d ingredients.</item>
+    </plurals>
+
+    <!-- List Manager events -->
+    <string name="events_payload">Event payload</string>
+    <string name="events_item_name">Item name</string>
+    <string name="events_list_name">List name (optional)</string>
+    <string name="events_fire">Fire</string>
+    <string name="events_item_added">Item added</string>
+    <string name="events_item_crossed_off">Item crossed off</string>
+    <string name="events_item_deleted">Item deleted</string>
+    <string name="events_fire_sequence">Fire full sequence</string>
+    <string name="events_fire_sequence_help">Sends an add, a cross-off, and a delete for the item above, each with and without the list name.</string>
+    <string name="events_last">Last event</string>
+
+    <!-- Activity -->
+    <string name="activity_empty_title">No activity yet</string>
+    <string name="activity_filtered_empty_title">Nothing in this category</string>
+    <string name="activity_empty_message">SDK callbacks and list events show up here as they happen.</string>
+    <string name="activity_filter_all">All</string>
+    <string name="activity_share">Share transcript</string>
+    <string name="activity_share_subject">AdAdapted SDK activity</string>
+    <string name="activity_clear">Clear</string>
 </resources>

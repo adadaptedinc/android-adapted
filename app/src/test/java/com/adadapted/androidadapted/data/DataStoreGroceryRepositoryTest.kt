@@ -1,0 +1,72 @@
+package com.adadapted.androidadapted.data
+
+import androidx.datastore.core.DataStoreFactory
+import com.adadapted.androidadapted.data.model.ItemOrigin
+import com.adadapted.androidadapted.data.model.ListIcon
+import com.adadapted.androidadapted.testing.RecordingListEventTracker
+import com.adadapted.androidadapted.testing.testList
+import java.io.File
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
+class DataStoreGroceryRepositoryTest {
+
+    @get:Rule
+    val folder = TemporaryFolder()
+
+    private val tracker = RecordingListEventTracker()
+    private val starter = listOf(testList())
+
+    private fun TestScope.repository() =
+        DataStoreGroceryRepository(
+            dataStore = DataStoreFactory.create(
+                serializer = GroceryListsSerializer(StoredGroceryLists(starter)),
+                scope = backgroundScope,
+                produceFile = { File(folder.root, "lists.json") },
+            ),
+            tracker = tracker,
+            externalScope = backgroundScope,
+        )
+
+    @Test
+    fun `starts with the starter lists`() = runTest {
+        assertEquals(starter, repository().lists.first())
+    }
+
+    @Test
+    fun `reports events once the change is saved`() = runTest {
+        val repository = repository()
+
+        assertTrue(repository.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
+
+        assertEquals(listOf("Milk"), repository.lists.first().single().items.map { it.name })
+        assertEquals(listOf(ListEvent.ItemAdded("Milk", "Groceries")), tracker.events)
+    }
+
+    @Test
+    fun `adds to the first list by default`() = runTest {
+        val repository = repository()
+        repository.addList("Household", ListIcon.HOUSEHOLD, "1")
+
+        assertTrue(repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
+
+        assertEquals(listOf("Soap"), repository.lists.first().first().items.map { it.name })
+    }
+
+    @Test
+    fun `fails when there's no list to add to`() = runTest {
+        val repository = repository()
+        repository.deleteList("g")
+
+        assertFalse(repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
+        assertFalse(repository.addItems("g", listOf("Soap"), ItemOrigin.MANUAL))
+        assertTrue(tracker.events.isEmpty())
+    }
+}

@@ -1,11 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.AndroidAdapted" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/purple_dark</item>
-        <item name="colorPrimaryVariant">@color/purple_mid</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/teal</item>
-        <item name="colorSecondaryVariant">@color/teal_light</item>
-        <item name="colorOnSecondary">@color/white</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/purple_dark</item>
+<resources>
+    <!-- Only shown before Compose draws; the app's theme lives in ui/theme. -->
+    <style name="Theme.AndroidAdapted" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
     </style>
 </resources>
