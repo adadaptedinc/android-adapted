@@ -157,7 +157,14 @@ private fun FilterChips(selected: ActivityCategory?, onSelect: (ActivityCategory
                 onClick = { onSelect(category) },
                 label = { Text(category?.label ?: stringResource(R.string.activity_filter_all)) },
                 leadingIcon = category?.let {
-                    { Icon(it.icon, contentDescription = null, tint = if (isSelected) LocalContentColor.current else it.tint(), modifier = Modifier.size(FilterChipDefaults.IconSize)) }
+                    {
+                        Icon(
+                            imageVector = it.icon,
+                            contentDescription = null,
+                            tint = if (isSelected) LocalContentColor.current else it.tint(),
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        )
+                    }
                 },
             )
         }

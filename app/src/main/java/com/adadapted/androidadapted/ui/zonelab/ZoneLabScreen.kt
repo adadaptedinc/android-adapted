@@ -73,7 +73,7 @@ enum class ZoneLabScenario(
 @Composable
 fun ZoneLabScreen(config: AdAdaptedConfig, onOpenScenario: (ZoneLabScenario) -> Unit) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val configRows = config.rows()
+    val configSettings = config.settings()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -100,8 +100,8 @@ fun ZoneLabScreen(config: AdAdaptedConfig, onOpenScenario: (ZoneLabScenario) -> 
             }
 
             item { SectionHeader(stringResource(R.string.zone_lab_configuration)) }
-            items(configRows) { row ->
-                ConfigRow(row)
+            items(configSettings) { setting ->
+                ConfigRow(setting)
             }
         }
     }
@@ -140,24 +140,28 @@ private fun ScenarioCard(scenario: ZoneLabScenario, onClick: () -> Unit, modifie
 }
 
 @Composable
-private fun ConfigRow(row: ConfigRow) {
+private fun ConfigRow(setting: ConfigSetting) {
     ContentCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconBadge(row.icon, AccentColors.Jade, size = 36.dp)
+            IconBadge(setting.icon, AccentColors.Jade, size = 36.dp)
             Spacer(Modifier.width(14.dp))
-            Text(stringResource(row.label), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-            when (val flag = row.flag) {
-                null -> Text(row.value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                else -> Pill(text = row.value, color = if (flag) AccentColors.Jade else MaterialTheme.colorScheme.outline)
+            Text(stringResource(setting.label), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+            when (val flag = setting.flag) {
+                null -> Text(
+                    text = setting.value,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                else -> Pill(text = setting.value, color = if (flag) AccentColors.Jade else MaterialTheme.colorScheme.outline)
             }
         }
     }
 }
 
-private data class ConfigRow(
+private data class ConfigSetting(
     @StringRes val label: Int,
     val icon: ImageVector,
     val value: String,
@@ -166,17 +170,18 @@ private data class ConfigRow(
 )
 
 @Composable
-private fun AdAdaptedConfig.rows(): List<ConfigRow> {
+private fun AdAdaptedConfig.settings(): List<ConfigSetting> {
     val on = stringResource(R.string.on)
     val off = stringResource(R.string.off)
-    fun flagRow(@StringRes label: Int, icon: ImageVector, isOn: Boolean) = ConfigRow(label, icon, if (isOn) on else off, isOn)
+    fun flagSetting(@StringRes label: Int, icon: ImageVector, isOn: Boolean) =
+        ConfigSetting(label, icon, if (isOn) on else off, isOn)
     return listOf(
-        ConfigRow(R.string.config_app_id, Icons.Outlined.Key, appId),
-        ConfigRow(R.string.config_environment, Icons.Outlined.Cloud, environmentName),
-        ConfigRow(R.string.config_custom_identifier, Icons.Outlined.Badge, customIdentifier),
-        flagRow(R.string.config_keyword_intercept, Icons.Outlined.Search, isKeywordInterceptEnabled),
-        flagRow(R.string.config_payloads, Icons.Outlined.Inventory2, arePayloadsEnabled),
-        flagRow(R.string.config_debug_logging, Icons.Outlined.BugReport, isDebugLoggingEnabled),
+        ConfigSetting(R.string.config_app_id, Icons.Outlined.Key, appId),
+        ConfigSetting(R.string.config_environment, Icons.Outlined.Cloud, environmentName),
+        ConfigSetting(R.string.config_custom_identifier, Icons.Outlined.Badge, customIdentifier),
+        flagSetting(R.string.config_keyword_intercept, Icons.Outlined.Search, isKeywordInterceptEnabled),
+        flagSetting(R.string.config_payloads, Icons.Outlined.Inventory2, arePayloadsEnabled),
+        flagSetting(R.string.config_debug_logging, Icons.Outlined.BugReport, isDebugLoggingEnabled),
     )
 }
 

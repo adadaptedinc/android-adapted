@@ -119,7 +119,7 @@ internal fun GroceryListScreen(
                     if (list != null) {
                         ListOptionsMenu(
                             isRecipeContextEnabled = uiState.isRecipeContextEnabled,
-                            canClearCrossedOff = list.items.any { it.isCrossedOff },
+                            canClearCrossedOff = list.crossedOffItems.isNotEmpty(),
                             onAction = onAction,
                         )
                     }

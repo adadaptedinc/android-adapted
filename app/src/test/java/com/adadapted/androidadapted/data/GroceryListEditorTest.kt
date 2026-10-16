@@ -78,7 +78,8 @@ class GroceryListEditorTest {
 
     @Test
     fun `uncrossing into a name that's already open merges the two`() {
-        val list = groceries.copy(items = listOf(milk.copy(quantity = 2), GroceryItem(id = "old", name = "MILK", isCrossedOff = true, quantity = 3)))
+        val oldMilk = GroceryItem(id = "old", name = "MILK", isCrossedOff = true, quantity = 3)
+        val list = groceries.copy(items = listOf(milk.copy(quantity = 2), oldMilk))
         val editor = GroceryListEditor(listOf(list))
 
         editor.setCrossedOff("g", "old", false)

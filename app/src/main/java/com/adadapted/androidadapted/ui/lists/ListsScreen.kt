@@ -176,7 +176,7 @@ private fun ListRow(
     modifier: Modifier = Modifier,
 ) {
     val accent = list.icon.accent
-    val crossedOff = list.items.count { it.isCrossedOff }
+    val crossedOff = list.crossedOffItems.size
     ContentCard(onClick = onClick, modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 14.dp, end = 4.dp),
@@ -212,7 +212,7 @@ private fun ListRow(
 /** How much is left to buy across every list, on a splash of brand color. */
 @Composable
 private fun SummaryCard(lists: List<GroceryList>, modifier: Modifier = Modifier) {
-    val remaining = lists.sumOf { list -> list.items.count { !it.isCrossedOff } }
+    val remaining = lists.sumOf { it.remainingItems.size }
     MatteCard(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
@@ -246,8 +246,18 @@ private fun ListRowMenu(
     onDelete: () -> Unit,
 ) {
     OverflowMenu(contentDescription = stringResource(R.string.list_options, listName)) {
-        MenuItem(stringResource(R.string.move_up), Icons.Outlined.ArrowUpward, onClick = { onMoveUp?.invoke() }, enabled = onMoveUp != null)
-        MenuItem(stringResource(R.string.move_down), Icons.Outlined.ArrowDownward, onClick = { onMoveDown?.invoke() }, enabled = onMoveDown != null)
+        MenuItem(
+            text = stringResource(R.string.move_up),
+            icon = Icons.Outlined.ArrowUpward,
+            onClick = { onMoveUp?.invoke() },
+            enabled = onMoveUp != null,
+        )
+        MenuItem(
+            text = stringResource(R.string.move_down),
+            icon = Icons.Outlined.ArrowDownward,
+            onClick = { onMoveDown?.invoke() },
+            enabled = onMoveDown != null,
+        )
         MenuItem(stringResource(R.string.delete), Icons.Outlined.Delete, onClick = onDelete, isDestructive = true)
     }
 }

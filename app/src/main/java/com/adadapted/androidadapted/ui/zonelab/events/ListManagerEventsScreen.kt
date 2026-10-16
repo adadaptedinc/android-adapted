@@ -1,5 +1,6 @@
 package com.adadapted.androidadapted.ui.zonelab.events
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -159,6 +160,7 @@ internal fun ListManagerEventsScreen(
 /** Headers here sit in an already-padded form, so they only need room above. */
 private val SectionTitlePadding = PaddingValues(top = 8.dp)
 
+@get:StringRes
 private val ListEventKind.label: Int
     get() = when (this) {
         ListEventKind.ADDED -> R.string.events_item_added

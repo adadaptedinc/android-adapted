@@ -37,12 +37,9 @@ internal class FakeGroceryRepository(initial: List<GroceryList> = emptyList()) :
     private val state = MutableStateFlow(initial)
     override val lists: StateFlow<List<GroceryList>> = state
 
-    val events = mutableListOf<ListEvent>()
-
     override suspend fun edit(change: GroceryListEditor.() -> Unit): Boolean {
         val editor = editorFor(state.value).apply(change)
         if (editor.isChanged) state.value = editor.result
-        events += editor.events
         return editor.isChanged
     }
 }
