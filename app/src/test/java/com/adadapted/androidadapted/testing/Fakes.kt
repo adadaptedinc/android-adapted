@@ -15,7 +15,6 @@ import com.adadapted.androidadapted.data.model.GroceryItem
 import com.adadapted.androidadapted.data.model.GroceryList
 import com.adadapted.androidadapted.data.model.ListIcon
 import com.adadapted.androidadapted.ui.components.PreviewAdZoneHandler
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -72,7 +71,7 @@ class FakeAdZoneHandlerFactory : AdZoneHandlerFactory {
     var addToList: AddToListHandler? = null
         private set
 
-    override fun create(scope: CoroutineScope, addToList: AddToListHandler?): AdZoneHandler {
+    override fun create(addToList: AddToListHandler?): AdZoneHandler {
         this.addToList = addToList
         return PreviewAdZoneHandler
     }

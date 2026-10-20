@@ -1,7 +1,6 @@
 package com.adadapted.androidadapted.ui.zonelab.scroller
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.adadapted.androidadapted.adadapted.AdZoneHandler
 import com.adadapted.androidadapted.adadapted.AdZoneHandlerFactory
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.update
 class ScrollerViewModel(adZoneHandlerFactory: AdZoneHandlerFactory) : ViewModel() {
 
     /** No list is attached: every ad row shares a zone ID, so each would add an ad's items. */
-    val zoneHandler: AdZoneHandler = adZoneHandlerFactory.create(viewModelScope, addToList = null)
+    val zoneHandler: AdZoneHandler = adZoneHandlerFactory.create(addToList = null)
 
     private val _rowCount = MutableStateFlow(PAGE_SIZE)
     val rowCount: StateFlow<Int> = _rowCount.asStateFlow()

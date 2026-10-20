@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.adadapted.androidadapted.R
 import com.adadapted.androidadapted.adadapted.AdZoneCatalog
+import com.adadapted.androidadapted.data.ListZoneRule
 import com.adadapted.androidadapted.data.model.ListIcon
 import com.adadapted.androidadapted.ui.components.FormSheet
 import com.adadapted.androidadapted.ui.components.wash
@@ -89,13 +90,13 @@ internal fun NewListSheet(onDismiss: () -> Unit, onAdd: (NewListDraft) -> Unit) 
             onValueChange = { zoneId = it.filter(Char::isDigit) },
             label = { Text(stringResource(R.string.new_list_zone_id)) },
             singleLine = true,
-            isError = zoneIdProblem == NewListDraft.ZoneIdProblem.USED_BY_ZONE_LAB,
+            isError = zoneIdProblem == ListZoneRule.Problem.RESERVED,
             supportingText = {
                 Text(
                     stringResource(
                         when (zoneIdProblem) {
-                            NewListDraft.ZoneIdProblem.USED_BY_ZONE_LAB -> R.string.new_list_zone_used_by_zone_lab
-                            NewListDraft.ZoneIdProblem.BLANK, null -> R.string.new_list_zone_help
+                            ListZoneRule.Problem.RESERVED -> R.string.new_list_zone_used_by_zone_lab
+                            ListZoneRule.Problem.BLANK, null -> R.string.new_list_zone_help
                         },
                     ),
                 )

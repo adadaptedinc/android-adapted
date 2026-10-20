@@ -26,6 +26,8 @@ class AddToListOffer internal constructor(private val content: AddToListContent)
     sealed interface Outcome {
         data class Added(val count: Int) : Outcome
         data object NoItems : Outcome
+
+        /** There was no list, or it couldn't take any more of these items. */
         data object NoList : Outcome
     }
 
@@ -46,7 +48,7 @@ class AddToListOffer internal constructor(private val content: AddToListContent)
 
     private companion object {
         const val NO_ITEMS_MESSAGE = "Content has no items with a title"
-        const val NO_LIST_MESSAGE = "No list to add the items to"
+        const val NO_LIST_MESSAGE = "No list could take the items"
     }
 }
 
@@ -58,6 +60,6 @@ internal fun ActivityLog.logDelivery(outcome: AddToListOffer.Outcome, subject: S
     when (outcome) {
         is AddToListOffer.Outcome.Added -> log(ActivityCategory.CONTENT, "$subject added ${outcome.count} item(s)", where)
         AddToListOffer.Outcome.NoItems -> log(ActivityCategory.ERROR, "$subject items not added", "$where · no items with a title")
-        AddToListOffer.Outcome.NoList -> log(ActivityCategory.ERROR, "$subject items not added", "$where · no list to add to")
+        AddToListOffer.Outcome.NoList -> log(ActivityCategory.ERROR, "$subject items not added", "$where · no list could take them")
     }
 }

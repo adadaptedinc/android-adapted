@@ -1,6 +1,7 @@
 package com.adadapted.androidadapted.ui.lists
 
 import com.adadapted.androidadapted.adadapted.AdZoneCatalog
+import com.adadapted.androidadapted.data.ListZoneRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -27,13 +28,13 @@ class NewListDraftTest {
         AdZoneCatalog.zoneLabZones.forEach { zoneId ->
             val draft = NewListDraft(name = "Party", zoneId = " $zoneId ")
 
-            assertEquals(NewListDraft.ZoneIdProblem.USED_BY_ZONE_LAB, draft.zoneIdProblem)
+            assertEquals(ListZoneRule.Problem.RESERVED, draft.zoneIdProblem)
             assertFalse(draft.canSubmit)
         }
     }
 
     @Test
     fun `a blank zone is rejected`() {
-        assertEquals(NewListDraft.ZoneIdProblem.BLANK, NewListDraft(name = "Party", zoneId = " ").zoneIdProblem)
+        assertEquals(ListZoneRule.Problem.BLANK, NewListDraft(name = "Party", zoneId = " ").zoneIdProblem)
     }
 }

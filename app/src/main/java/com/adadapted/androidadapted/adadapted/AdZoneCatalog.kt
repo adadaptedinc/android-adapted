@@ -13,7 +13,7 @@ object AdZoneCatalog {
 
     /** The scroller and the off-screen page are never on screen together, so they can share. */
     const val SCROLLER = "110002"
-    const val OFF_SCREEN_TOP = "110002"
+    const val OFF_SCREEN_TOP = SCROLLER
     const val OFF_SCREEN_BOTTOM = "110003"
 
     /** 102110 and 110002 serve a different ad for this zone context. */

@@ -1,11 +1,15 @@
 package com.adadapted.androidadapted.data
 
+import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import com.adadapted.androidadapted.data.model.ItemOrigin
 import com.adadapted.androidadapted.data.model.ListIcon
 import com.adadapted.androidadapted.testing.RecordingListEventTracker
 import com.adadapted.androidadapted.testing.testList
 import java.io.File
+import java.io.IOException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -68,5 +72,25 @@ class DataStoreGroceryRepositoryTest {
         assertFalse(repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
         assertFalse(repository.addItems("g", listOf("Soap"), ItemOrigin.MANUAL))
         assertTrue(tracker.events.isEmpty())
+    }
+
+    @Test
+    fun `a file that can't be read shows no lists instead of crashing`() = runTest {
+        val unreadable = object : DataStore<StoredGroceryLists> {
+            override val data: Flow<StoredGroceryLists> = flow { throw IOException("Disk error") }
+
+            override suspend fun updateData(transform: suspend (StoredGroceryLists) -> StoredGroceryLists) =
+                throw IOException("Disk error")
+        }
+        val readErrors = mutableListOf<IOException>()
+        val repository = DataStoreGroceryRepository(
+            dataStore = unreadable,
+            tracker = tracker,
+            externalScope = backgroundScope,
+            onReadFailed = readErrors::add,
+        )
+
+        assertTrue(repository.lists.first().isEmpty())
+        assertEquals("Disk error", readErrors.single().message)
     }
 }

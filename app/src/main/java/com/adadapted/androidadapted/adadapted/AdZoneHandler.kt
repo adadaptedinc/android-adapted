@@ -28,10 +28,14 @@ fun interface AdZoneHandlerFactory {
      * Without [addToList], add-to-list content is logged but left unhandled, so the SDK doesn't
      * count an interaction for items nothing received.
      */
-    fun create(scope: CoroutineScope, addToList: AddToListHandler?): AdZoneHandler
+    fun create(addToList: AddToListHandler?): AdZoneHandler
 }
 
-/** Logs every zone callback to the activity log and delivers add-to-list content to [addToList]. */
+/**
+ * Logs every zone callback to the activity log and delivers add-to-list content to [addToList].
+ * Deliveries run in [scope], which should outlive the screen, so the SDK still hears the outcome
+ * when the user leaves mid-delivery.
+ */
 class ActivityLoggingAdZoneHandler(
     private val activityLog: ActivityLog,
     private val scope: CoroutineScope,

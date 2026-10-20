@@ -76,12 +76,13 @@ class DefaultAppContainer(context: Context) : AppContainer {
             tracker = ActivityLoggingListEventTracker(sdkListEventTracker, activityLog),
             externalScope = applicationScope,
             zoneRule = AdZoneCatalog.listZoneRule,
+            onReadFailed = { error -> activityLog.log(ActivityCategory.ERROR, "Could not read lists", error.message) },
             onWriteFailed = { error -> activityLog.log(ActivityCategory.ERROR, "Could not save lists", error.message) },
         )
     }
 
-    override val adZoneHandlerFactory: AdZoneHandlerFactory = AdZoneHandlerFactory { scope, addToList ->
-        ActivityLoggingAdZoneHandler(activityLog, scope, addToList)
+    override val adZoneHandlerFactory: AdZoneHandlerFactory = AdZoneHandlerFactory { addToList ->
+        ActivityLoggingAdZoneHandler(activityLog, applicationScope, addToList)
     }
 
     val adAdaptedService: AdAdaptedService by lazy {

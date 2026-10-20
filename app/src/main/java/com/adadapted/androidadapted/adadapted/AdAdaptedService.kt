@@ -45,7 +45,7 @@ class AdAdaptedService(
         val offer = AddToListOffer(content)
         activityLog.log(
             ActivityCategory.CONTENT,
-            "Payload delivered ${offer.itemNames.size} item(s)",
+            "Payload received ${offer.itemNames.size} item(s)",
             offer.itemNames.joinToString().ifEmpty { offer.source },
         )
         scope.launch {

@@ -10,9 +10,10 @@ data class KeywordSuggestion(val termId: String, val name: String)
 
 /** Matches typed text against keyword intercept terms and reports what the user saw and picked. */
 interface KeywordSuggestionSource {
-    /** Shorter queries never match. */
+    /** Shorter queries never match, so callers skip them. */
     val minimumQueryLength: Int
 
+    /** [query] is trimmed and at least [minimumQueryLength] long. */
     fun match(query: String): List<KeywordSuggestion>
 
     /** Call once per suggestion when it's shown. Repeat calls for the same match are ignored. */
@@ -33,12 +34,7 @@ class AdAdaptedKeywordSuggestionSource : KeywordSuggestionSource {
     override val minimumQueryLength: Int = 3
 
     override fun match(query: String): List<KeywordSuggestion> {
-        val trimmed = query.trim()
-        if (trimmed.length < minimumQueryLength) {
-            lastMatches = emptyMap()
-            return emptyList()
-        }
-        val matches = KeywordInterceptMatcher.match(trimmed)
+        val matches = KeywordInterceptMatcher.match(query)
         lastMatches = matches.associateBy { it.termId }
         return matches
             .map { KeywordSuggestion(termId = it.termId, name = it.name) }

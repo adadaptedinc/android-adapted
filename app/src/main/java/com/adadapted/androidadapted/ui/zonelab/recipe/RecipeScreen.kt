@@ -88,7 +88,7 @@ internal fun RecipeScreen(
     zoneHandler: AdZoneHandler,
     onContextChange: (String) -> Unit,
     onAddIngredients: () -> Unit,
-    onMessageShown: () -> Unit,
+    onMessageShown: (RecipeMessage) -> Unit,
     onBack: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -97,8 +97,12 @@ internal fun RecipeScreen(
     uiState.message?.let { message ->
         val text = message.text()
         LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(text)
-            onMessageShown()
+            // Also clears it when the screen goes away mid-snackbar, so it doesn't show again on return.
+            try {
+                snackbarHostState.showSnackbar(text)
+            } finally {
+                onMessageShown(message)
+            }
         }
     }
 
@@ -282,7 +286,7 @@ private fun StepCard(number: Int, text: String) {
 @Composable
 private fun RecipeMessage.text(): String = when (this) {
     is RecipeMessage.IngredientsAdded -> pluralStringResource(R.plurals.recipe_ingredients_added, count, count)
-    RecipeMessage.NoList -> stringResource(R.string.recipe_no_list)
+    is RecipeMessage.NoList -> stringResource(R.string.recipe_no_list)
 }
 
 @Preview

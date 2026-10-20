@@ -10,19 +10,9 @@ data class NewListDraft(
     val icon: ListIcon = ListIcon.CART,
     val zoneId: String = AdZoneCatalog.LIST,
 ) {
-    enum class ZoneIdProblem {
-        BLANK,
-
-        /** Zone Lab's zones would deliver an ad's items to both Zone Lab and the list. */
-        USED_BY_ZONE_LAB,
-    }
-
-    val zoneIdProblem: ZoneIdProblem?
-        get() = when (AdZoneCatalog.listZoneRule.problemWith(zoneId)) {
-            ListZoneRule.Problem.BLANK -> ZoneIdProblem.BLANK
-            ListZoneRule.Problem.RESERVED -> ZoneIdProblem.USED_BY_ZONE_LAB
-            null -> null
-        }
+    /** [ListZoneRule.Problem.RESERVED] means a Zone Lab zone, see [AdZoneCatalog.listZoneRule]. */
+    val zoneIdProblem: ListZoneRule.Problem?
+        get() = AdZoneCatalog.listZoneRule.problemWith(zoneId)
 
     val canSubmit: Boolean
         get() = name.isNotBlank() && zoneIdProblem == null

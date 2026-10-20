@@ -45,7 +45,7 @@ import com.adadapted.androidadapted.ui.theme.AccentColors
 import com.adadapted.androidadapted.ui.theme.AndroidAdaptedTheme
 import com.adadapted.androidadapted.ui.theme.appTopBarColors
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 fun ScrollerScreen(viewModel: ScrollerViewModel, onBack: () -> Unit) {
@@ -133,18 +133,21 @@ private fun ContentRow(index: Int) {
     }
 }
 
-/** Asks for more rows as the end of the list comes into view. */
+/**
+ * Asks for more rows as the end of the list comes into view, and again after each load while the
+ * end is still in view, as on a tall screen.
+ */
 @Composable
 private fun LoadMoreEffect(listState: LazyListState, onLoadMore: () -> Unit) {
     val currentOnLoadMore by rememberUpdatedState(onLoadMore)
     LaunchedEffect(listState) {
         snapshotFlow {
             val layout = listState.layoutInfo
-            val lastVisible = layout.visibleItemsInfo.lastOrNull()?.index ?: return@snapshotFlow false
-            lastVisible >= layout.totalItemsCount - LOAD_MORE_THRESHOLD
+            val lastVisible = layout.visibleItemsInfo.lastOrNull()?.index ?: return@snapshotFlow null
+            layout.totalItemsCount.takeIf { lastVisible >= it - LOAD_MORE_THRESHOLD }
         }
+            .filterNotNull()
             .distinctUntilChanged()
-            .filter { it }
             .collect { currentOnLoadMore() }
     }
 }

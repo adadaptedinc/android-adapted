@@ -116,6 +116,16 @@ class GroceryListViewModelTest {
     }
 
     @Test
+    fun `the editor closes when its item is removed some other way`() = runTest {
+        val viewModel = viewModel()
+        viewModel.onAction(GroceryListAction.EditItem(milk))
+
+        repository.deleteItems("g", setOf(milk.id))
+
+        assertEquals(null, viewModel.uiState.value.editingItem)
+    }
+
+    @Test
     fun `ads in the list's zone add to this list`() = runTest {
         viewModel()
 

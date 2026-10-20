@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -15,18 +16,27 @@ import kotlinx.coroutines.withContext
  * Persists the lists with DataStore and reports each change to [tracker] once it has been saved.
  *
  * Writes run in [externalScope], so a change that has started is saved and reported even if the
- * screen that asked for it goes away. [onWriteFailed] hears about saves that couldn't be written.
+ * screen that asked for it goes away. [onReadFailed] hears about a file that couldn't be read, after
+ * which no lists are shown, and [onWriteFailed] about saves that couldn't be written.
  */
 internal class DataStoreGroceryRepository(
     private val dataStore: DataStore<StoredGroceryLists>,
     private val tracker: ListEventTracker,
     private val externalScope: CoroutineScope,
     zoneRule: ListZoneRule = ListZoneRule(),
+    private val onReadFailed: (IOException) -> Unit = {},
     private val onWriteFailed: (IOException) -> Unit = {},
 ) : EditorBackedGroceryRepository(zoneRule) {
 
     override val lists: Flow<List<GroceryList>> =
-        dataStore.data.map { it.lists }.distinctUntilChanged()
+        dataStore.data
+            .catch { error ->
+                if (error !is IOException) throw error
+                onReadFailed(error)
+                emit(StoredGroceryLists(emptyList()))
+            }
+            .map { it.lists }
+            .distinctUntilChanged()
 
     override suspend fun edit(change: GroceryListEditor.() -> Unit): Boolean =
         externalScope.async {

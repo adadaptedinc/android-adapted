@@ -46,7 +46,7 @@ data class GroceryListUiState(
     val isRecipeContextEnabled: Boolean = false,
     /** Changes whenever a fresh ad is requested, so the zone can be recreated. */
     val zoneReloadCount: Int = 0,
-    /** The item open in the editor, as it was when the editor opened. */
+    /** The item open in the editor, as it was when the editor opened. Null once the item is gone. */
     val editingItem: GroceryItem? = null,
 ) {
     val list: GroceryList?
@@ -88,7 +88,7 @@ class GroceryListViewModel(
     private val editingItem = MutableStateFlow<GroceryItem?>(null)
 
     /** Ads in this list's zone add their items to this list. */
-    val zoneHandler: AdZoneHandler = adZoneHandlerFactory.create(viewModelScope) { names ->
+    val zoneHandler: AdZoneHandler = adZoneHandlerFactory.create { names ->
         repository.addItems(listId, names, ItemOrigin.AD)
     }
 
@@ -121,7 +121,8 @@ class GroceryListViewModel(
                 suggestions = suggestions,
                 isRecipeContextEnabled = zone.isRecipeContextEnabled,
                 zoneReloadCount = zone.reloadCount,
-                editingItem = editing,
+                // Closes the editor when the item is removed some other way, rather than dropping the edits on save.
+                editingItem = editing?.takeIf { (content as? ListContent.Ready)?.list?.items?.any { it.id == editing.id } == true },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), GroceryListUiState())
 

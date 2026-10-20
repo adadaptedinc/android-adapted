@@ -21,10 +21,13 @@ data class RecipeUiState(
     val message: RecipeMessage? = null,
 )
 
-/** Shown once, then cleared with [RecipeViewModel.onMessageShown]. */
+/**
+ * Shown once, then cleared with [RecipeViewModel.onMessageShown]. Not data classes, so a repeat of
+ * the same message is a new value and shows again.
+ */
 sealed interface RecipeMessage {
-    data class IngredientsAdded(val count: Int) : RecipeMessage
-    data object NoList : RecipeMessage
+    class IngredientsAdded(val count: Int) : RecipeMessage
+    class NoList : RecipeMessage
 }
 
 class RecipeViewModel(
@@ -37,7 +40,7 @@ class RecipeViewModel(
     val uiState: StateFlow<RecipeUiState> = _uiState.asStateFlow()
 
     /** Resolves the list when content arrives, so ads always land in whichever list is first. */
-    val zoneHandler: AdZoneHandler = adZoneHandlerFactory.create(viewModelScope) { names ->
+    val zoneHandler: AdZoneHandler = adZoneHandlerFactory.create { names ->
         repository.addItemsToDefaultList(names, ItemOrigin.AD)
     }
 
@@ -55,13 +58,14 @@ class RecipeViewModel(
         val ingredients = _uiState.value.recipe.ingredients
         viewModelScope.launch {
             val isAdded = repository.addItemsToDefaultList(ingredients, ItemOrigin.RECIPE)
-            val message = if (isAdded) RecipeMessage.IngredientsAdded(ingredients.size) else RecipeMessage.NoList
+            val message = if (isAdded) RecipeMessage.IngredientsAdded(ingredients.size) else RecipeMessage.NoList()
             _uiState.update { it.copy(message = message) }
         }
     }
 
-    fun onMessageShown() {
-        _uiState.update { it.copy(message = null) }
+    /** Ignored when a newer message has replaced [message]. */
+    fun onMessageShown(message: RecipeMessage) {
+        _uiState.update { if (it.message === message) it.copy(message = null) else it }
     }
 
     companion object {

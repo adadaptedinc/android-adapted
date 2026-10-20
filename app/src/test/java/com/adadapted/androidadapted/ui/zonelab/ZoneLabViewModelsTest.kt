@@ -66,9 +66,10 @@ class ZoneLabViewModelsTest {
         val items = repository.lists.value.single().items
         assertEquals(Recipe.TomatoSauce.ingredients, items.map { it.name })
         assertTrue(items.all { it.origin == ItemOrigin.RECIPE })
-        assertEquals(RecipeMessage.IngredientsAdded(items.size), viewModel.uiState.value.message)
+        val message = viewModel.uiState.value.message
+        assertEquals(items.size, (message as RecipeMessage.IngredientsAdded).count)
 
-        viewModel.onMessageShown()
+        viewModel.onMessageShown(message)
         assertNull(viewModel.uiState.value.message)
     }
 
@@ -78,7 +79,7 @@ class ZoneLabViewModelsTest {
 
         viewModel.addIngredientsToList()
 
-        assertEquals(RecipeMessage.NoList, viewModel.uiState.value.message)
+        assertTrue(viewModel.uiState.value.message is RecipeMessage.NoList)
     }
 
     @Test

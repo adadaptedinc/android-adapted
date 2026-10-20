@@ -57,13 +57,15 @@ class GroceryListEditorTest {
     }
 
     @Test
-    fun `quantity never passes the maximum`() {
+    fun `adding to an item at the maximum quantity adds nothing`() {
         val full = groceries.copy(items = listOf(milk.copy(quantity = GroceryItem.QuantityRange.last)))
         val editor = GroceryListEditor(listOf(full))
 
-        editor.addItems("g", listOf("Milk"), ItemOrigin.MANUAL)
+        assertFalse(editor.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
 
         assertEquals(GroceryItem.QuantityRange.last, editor.items().single().quantity)
+        assertFalse(editor.isChanged)
+        assertTrue(editor.events.isEmpty())
     }
 
     @Test
