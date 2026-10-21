@@ -2,6 +2,7 @@ package com.adadapted.androidadapted.ui.lists
 
 import com.adadapted.androidadapted.adadapted.AdZoneCatalog
 import com.adadapted.androidadapted.adadapted.KeywordSuggestion
+import com.adadapted.androidadapted.data.AddItemsResult
 import com.adadapted.androidadapted.data.model.GroceryItem
 import com.adadapted.androidadapted.data.model.ItemOrigin
 import com.adadapted.androidadapted.testing.FakeAdZoneHandlerFactory
@@ -16,6 +17,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -129,9 +131,9 @@ class GroceryListViewModelTest {
     fun `ads in the list's zone add to this list`() = runTest {
         viewModel()
 
-        val isAdded = zoneHandlers.addToList!!.addToList(listOf("Granola"))
+        val result = zoneHandlers.addToList!!.addToList(listOf("Granola"))
 
-        assertTrue(isAdded)
+        assertEquals(AddItemsResult.Added(listOf("Granola")), result)
         assertEquals(ItemOrigin.AD, repository.lists.value.single().items.last().origin)
     }
 
@@ -153,6 +155,21 @@ class GroceryListViewModelTest {
         viewModel.onAction(GroceryListAction.DraftChanged("  bre  "))
         advanceTimeBy(GroceryListViewModel.SUGGESTION_DEBOUNCE_MILLIS + 1)
 
-        assertEquals(listOf(KeywordSuggestion("bread", "Bread")), viewModel.uiState.value.suggestions)
+        assertEquals(listOf(KeywordSuggestion("bread", "Bread", matchId = 1)), viewModel.uiState.value.suggestions)
+    }
+
+    @Test
+    fun `a new match for the same terms shows as new suggestions`() = runTest {
+        val viewModel = viewModel()
+
+        viewModel.onAction(GroceryListAction.DraftChanged("Bre"))
+        advanceTimeBy(GroceryListViewModel.SUGGESTION_DEBOUNCE_MILLIS + 1)
+        val first = viewModel.uiState.value.suggestions
+        viewModel.onAction(GroceryListAction.DraftChanged("Brea"))
+        advanceTimeBy(GroceryListViewModel.SUGGESTION_DEBOUNCE_MILLIS + 1)
+        val second = viewModel.uiState.value.suggestions
+
+        assertEquals(first.map { it.termId }, second.map { it.termId })
+        assertNotEquals(first, second)
     }
 }

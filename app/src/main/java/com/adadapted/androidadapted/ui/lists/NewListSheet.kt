@@ -3,6 +3,7 @@ package com.adadapted.androidadapted.ui.lists
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
@@ -66,7 +67,10 @@ internal fun NewListSheet(onDismiss: () -> Unit, onAdd: (NewListDraft) -> Unit) 
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.new_list_icon), style = MaterialTheme.typography.labelLarge)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 ListIcon.entries.forEach { option ->
                     FilledIconToggleButton(
                         checked = option == icon,

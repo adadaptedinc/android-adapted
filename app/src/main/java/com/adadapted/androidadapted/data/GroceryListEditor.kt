@@ -29,17 +29,13 @@ internal class GroceryListEditor(lists: List<GroceryList>, private val zoneRule:
 
     /**
      * Bumps the quantity of a matching item that isn't crossed off instead of adding a duplicate, and
-     * skips a match already at the maximum. Returns whether anything was added, which is false when
-     * the list doesn't exist, every name is blank, or every match is at the maximum.
+     * skips blank names and matches already at the maximum. The result names what was added, trimmed.
      */
-    fun addItems(listId: String, names: List<String>, origin: ItemOrigin): Boolean {
-        val listIndex = indexOfList(listId) ?: return false
-        val trimmedNames = names.map(String::trim).filter(String::isNotEmpty)
-        if (trimmedNames.isEmpty()) return false
-
-        val original = lists[listIndex]
-        var list = original
-        for (name in trimmedNames) {
+    fun addItems(listId: String, names: List<String>, origin: ItemOrigin): AddItemsResult {
+        val listIndex = indexOfList(listId) ?: return AddItemsResult.NoList
+        var list = lists[listIndex]
+        val added = mutableListOf<String>()
+        for (name in names.map(String::trim).filter(String::isNotEmpty)) {
             val existing = list.items.indexOfOpenItem(name)
             val items = when {
                 existing == null -> list.items + GroceryItem(name = name, origin = origin)
@@ -48,11 +44,12 @@ internal class GroceryListEditor(lists: List<GroceryList>, private val zoneRule:
                 else -> continue
             }
             list = list.copy(items = items)
+            added += name
             pendingEvents += ListEvent.ItemAdded(name, list.name)
         }
-        if (list == original) return false
+        if (added.isEmpty()) return AddItemsResult.NothingAdded
         commit(listIndex, list)
-        return true
+        return AddItemsResult.Added(added)
     }
 
     fun setCrossedOff(listId: String, itemId: String, isCrossedOff: Boolean) {

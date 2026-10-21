@@ -292,7 +292,7 @@ private fun SuggestionDropdown(
     ) {
         LazyColumn(modifier = Modifier.heightIn(max = 220.dp)) {
             items(suggestions, key = KeywordSuggestion::termId) { suggestion ->
-                LaunchedEffect(suggestions, suggestion.termId) { onShown(suggestion) }
+                LaunchedEffect(suggestion) { onShown(suggestion) }
                 ListItem(
                     headlineContent = { Text(suggestion.name) },
                     leadingContent = { Icon(Icons.Outlined.Search, contentDescription = null) },
@@ -374,7 +374,7 @@ private fun GroceryListScreenPreview() {
                         ),
                     ),
                 ),
-                suggestions = listOf(KeywordSuggestion("1", "Mighty Milk"), KeywordSuggestion("2", "Milk Duds")),
+                suggestions = listOf(KeywordSuggestion("1", "Mighty Milk", matchId = 1), KeywordSuggestion("2", "Milk Duds", matchId = 1)),
             ),
             draft = { "Mil" },
             zoneHandler = PreviewAdZoneHandler,

@@ -10,11 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface GroceryRepository {
     val lists: Flow<List<GroceryList>>
 
-    /** Returns whether anything was added, which is false when the list doesn't exist. */
-    suspend fun addItems(listId: String, names: List<String>, origin: ItemOrigin): Boolean
+    suspend fun addItems(listId: String, names: List<String>, origin: ItemOrigin): AddItemsResult
 
-    /** Adds to the first list. Returns false when there are no lists. */
-    suspend fun addItemsToDefaultList(names: List<String>, origin: ItemOrigin): Boolean
+    /** Adds to the first list, or returns [AddItemsResult.NoList] when there are no lists. */
+    suspend fun addItemsToDefaultList(names: List<String>, origin: ItemOrigin): AddItemsResult
 
     suspend fun setCrossedOff(listId: String, itemId: String, isCrossedOff: Boolean)
 

@@ -5,8 +5,11 @@ import com.adadapted.android.sdk.core.keyword.Suggestion
 import com.adadapted.androidadapted.core.activity.ActivityCategory
 import com.adadapted.androidadapted.core.activity.ActivityLog
 
-/** A keyword intercept term offered as the user types. */
-data class KeywordSuggestion(val termId: String, val name: String)
+/**
+ * A keyword intercept term offered as the user types. [matchId] tells apart the same term returned
+ * by different matches, since the SDK tracks each match's suggestions separately.
+ */
+data class KeywordSuggestion(val termId: String, val name: String, val matchId: Long)
 
 /** Matches typed text against keyword intercept terms and reports what the user saw and picked. */
 interface KeywordSuggestionSource {
@@ -16,7 +19,10 @@ interface KeywordSuggestionSource {
     /** [query] is trimmed and at least [minimumQueryLength] long. */
     fun match(query: String): List<KeywordSuggestion>
 
-    /** Call once per suggestion when it's shown. Repeat calls for the same match are ignored. */
+    /**
+     * Call once per suggestion when it's shown. Repeat calls for the same match are ignored, as are
+     * suggestions from an earlier match.
+     */
     fun reportPresented(suggestion: KeywordSuggestion)
 
     fun reportSelected(suggestion: KeywordSuggestion)
@@ -29,25 +35,30 @@ interface KeywordSuggestionSource {
 class AdAdaptedKeywordSuggestionSource : KeywordSuggestionSource {
 
     // The SDK tracks presentation and selection on the Suggestion it returned from the last match.
+    private var lastMatchId = 0L
     private var lastMatches: Map<String, Suggestion> = emptyMap()
 
     override val minimumQueryLength: Int = 3
 
     override fun match(query: String): List<KeywordSuggestion> {
         val matches = KeywordInterceptMatcher.match(query)
+        val matchId = ++lastMatchId
         lastMatches = matches.associateBy { it.termId }
         return matches
-            .map { KeywordSuggestion(termId = it.termId, name = it.name) }
+            .map { KeywordSuggestion(termId = it.termId, name = it.name, matchId = matchId) }
             .sortedBy { it.name.lowercase() }
     }
 
     override fun reportPresented(suggestion: KeywordSuggestion) {
-        lastMatches[suggestion.termId]?.presented()
+        sdkSuggestionFor(suggestion)?.presented()
     }
 
     override fun reportSelected(suggestion: KeywordSuggestion) {
-        lastMatches[suggestion.termId]?.selected()
+        sdkSuggestionFor(suggestion)?.selected()
     }
+
+    private fun sdkSuggestionFor(suggestion: KeywordSuggestion): Suggestion? =
+        lastMatches[suggestion.termId]?.takeIf { suggestion.matchId == lastMatchId }
 }
 
 /** Passes calls on to [delegate] and records each match and selection in the activity log. */

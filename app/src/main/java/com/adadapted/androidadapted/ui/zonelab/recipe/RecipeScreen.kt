@@ -287,6 +287,8 @@ private fun StepCard(number: Int, text: String) {
 private fun RecipeMessage.text(): String = when (this) {
     is RecipeMessage.IngredientsAdded -> pluralStringResource(R.plurals.recipe_ingredients_added, count, count)
     is RecipeMessage.NoList -> stringResource(R.string.recipe_no_list)
+    is RecipeMessage.AllAtMaximum -> stringResource(R.string.recipe_all_at_maximum)
+    is RecipeMessage.NotSaved -> stringResource(R.string.recipe_not_saved)
 }
 
 @Preview

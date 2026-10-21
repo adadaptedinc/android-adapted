@@ -38,25 +38,25 @@ internal class DataStoreGroceryRepository(
             .map { it.lists }
             .distinctUntilChanged()
 
-    override suspend fun edit(change: GroceryListEditor.() -> Unit): Boolean =
+    override suspend fun <T> edit(change: GroceryListEditor.() -> T): T? =
         externalScope.async {
             var events = emptyList<ListEvent>()
-            var isChanged = false
+            var outcome: T? = null
             try {
                 // DataStore runs the transform in the caller's context, so keep the editing off main.
                 withContext(Dispatchers.Default) {
                     dataStore.updateData { stored ->
-                        val editor = editorFor(stored.lists).apply { change() }
+                        val editor = editorFor(stored.lists)
+                        outcome = editor.change()
                         events = editor.events
-                        isChanged = editor.isChanged
-                        if (isChanged) stored.copy(lists = editor.result) else stored
+                        if (editor.isChanged) stored.copy(lists = editor.result) else stored
                     }
                 }
             } catch (e: IOException) {
                 onWriteFailed(e)
-                return@async false
+                return@async null
             }
             events.forEach(tracker::track)
-            isChanged
+            outcome
         }.await()
 }

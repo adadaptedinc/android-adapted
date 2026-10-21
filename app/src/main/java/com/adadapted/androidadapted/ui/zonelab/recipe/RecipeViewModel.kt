@@ -7,6 +7,7 @@ import com.adadapted.androidadapted.adadapted.AdZoneHandler
 import com.adadapted.androidadapted.adadapted.AdZoneHandlerFactory
 import com.adadapted.androidadapted.core.activity.ActivityCategory
 import com.adadapted.androidadapted.core.activity.ActivityLog
+import com.adadapted.androidadapted.data.AddItemsResult
 import com.adadapted.androidadapted.data.GroceryRepository
 import com.adadapted.androidadapted.data.model.ItemOrigin
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,8 @@ data class RecipeUiState(
 sealed interface RecipeMessage {
     class IngredientsAdded(val count: Int) : RecipeMessage
     class NoList : RecipeMessage
+    class AllAtMaximum : RecipeMessage
+    class NotSaved : RecipeMessage
 }
 
 class RecipeViewModel(
@@ -57,8 +60,12 @@ class RecipeViewModel(
     fun addIngredientsToList() {
         val ingredients = _uiState.value.recipe.ingredients
         viewModelScope.launch {
-            val isAdded = repository.addItemsToDefaultList(ingredients, ItemOrigin.RECIPE)
-            val message = if (isAdded) RecipeMessage.IngredientsAdded(ingredients.size) else RecipeMessage.NoList()
+            val message = when (val result = repository.addItemsToDefaultList(ingredients, ItemOrigin.RECIPE)) {
+                is AddItemsResult.Added -> RecipeMessage.IngredientsAdded(result.names.size)
+                AddItemsResult.NothingAdded -> RecipeMessage.AllAtMaximum()
+                AddItemsResult.NoList -> RecipeMessage.NoList()
+                AddItemsResult.NotSaved -> RecipeMessage.NotSaved()
+            }
             _uiState.update { it.copy(message = message) }
         }
     }

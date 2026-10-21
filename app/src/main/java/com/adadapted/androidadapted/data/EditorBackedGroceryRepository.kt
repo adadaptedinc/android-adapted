@@ -8,11 +8,12 @@ import com.adadapted.androidadapted.data.model.ListIcon
 /** Runs every change through a [GroceryListEditor], leaving subclasses to decide how lists are stored. */
 internal abstract class EditorBackedGroceryRepository(private val zoneRule: ListZoneRule) : GroceryRepository {
 
-    override suspend fun addItems(listId: String, names: List<String>, origin: ItemOrigin): Boolean =
-        edit { addItems(listId, names, origin) }
+    override suspend fun addItems(listId: String, names: List<String>, origin: ItemOrigin): AddItemsResult =
+        edit { addItems(listId, names, origin) } ?: AddItemsResult.NotSaved
 
-    override suspend fun addItemsToDefaultList(names: List<String>, origin: ItemOrigin): Boolean =
-        edit { result.firstOrNull()?.let { addItems(it.id, names, origin) } }
+    override suspend fun addItemsToDefaultList(names: List<String>, origin: ItemOrigin): AddItemsResult =
+        edit { result.firstOrNull()?.let { addItems(it.id, names, origin) } ?: AddItemsResult.NoList }
+            ?: AddItemsResult.NotSaved
 
     override suspend fun setCrossedOff(listId: String, itemId: String, isCrossedOff: Boolean) {
         edit { setCrossedOff(listId, itemId, isCrossedOff) }
@@ -42,8 +43,11 @@ internal abstract class EditorBackedGroceryRepository(private val zoneRule: List
         edit { moveList(listId, toIndex) }
     }
 
-    /** Applies [change] to the current lists. Returns whether it altered them and they were saved. */
-    protected abstract suspend fun edit(change: GroceryListEditor.() -> Unit): Boolean
+    /**
+     * Applies [change] to the current lists and saves them if it altered them. Returns what [change]
+     * returned, or null when the lists couldn't be saved.
+     */
+    protected abstract suspend fun <T> edit(change: GroceryListEditor.() -> T): T?
 
     protected fun editorFor(lists: List<GroceryList>): GroceryListEditor = GroceryListEditor(lists, zoneRule)
 }

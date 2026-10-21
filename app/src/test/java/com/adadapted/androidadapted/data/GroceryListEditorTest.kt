@@ -26,7 +26,7 @@ class GroceryListEditorTest {
     fun `adding an open item's name bumps its quantity, ignoring case`() {
         val editor = editor()
 
-        assertTrue(editor.addItems("g", listOf(" milk "), ItemOrigin.MANUAL))
+        assertEquals(AddItemsResult.Added(listOf("milk")), editor.addItems("g", listOf(" milk "), ItemOrigin.MANUAL))
 
         assertEquals(2, editor.items().first { it.id == "milk" }.quantity)
         assertEquals(2, editor.items().size)
@@ -49,8 +49,8 @@ class GroceryListEditorTest {
     fun `adding to a missing list or only blank names changes nothing`() {
         val editor = editor()
 
-        assertFalse(editor.addItems("missing", listOf("Bread"), ItemOrigin.MANUAL))
-        assertFalse(editor.addItems("g", listOf(" ", ""), ItemOrigin.MANUAL))
+        assertEquals(AddItemsResult.NoList, editor.addItems("missing", listOf("Bread"), ItemOrigin.MANUAL))
+        assertEquals(AddItemsResult.NothingAdded, editor.addItems("g", listOf(" ", ""), ItemOrigin.MANUAL))
 
         assertFalse(editor.isChanged)
         assertTrue(editor.events.isEmpty())
@@ -61,11 +61,22 @@ class GroceryListEditorTest {
         val full = groceries.copy(items = listOf(milk.copy(quantity = GroceryItem.QuantityRange.last)))
         val editor = GroceryListEditor(listOf(full))
 
-        assertFalse(editor.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
+        assertEquals(AddItemsResult.NothingAdded, editor.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
 
         assertEquals(GroceryItem.QuantityRange.last, editor.items().single().quantity)
         assertFalse(editor.isChanged)
         assertTrue(editor.events.isEmpty())
+    }
+
+    @Test
+    fun `adding names only some of which fit says which were added`() {
+        val nearlyFull = groceries.copy(items = listOf(milk.copy(quantity = GroceryItem.QuantityRange.last - 1)))
+        val editor = GroceryListEditor(listOf(nearlyFull))
+
+        val result = editor.addItems("g", listOf("Milk", "Bread", "Milk"), ItemOrigin.AD)
+
+        assertEquals(AddItemsResult.Added(listOf("Milk", "Bread")), result)
+        assertEquals(listOf(GroceryItem.QuantityRange.last, 1), editor.items().map { it.quantity })
     }
 
     @Test

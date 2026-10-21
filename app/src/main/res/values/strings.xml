@@ -129,6 +129,8 @@
     <string name="recipe_steps">Steps</string>
     <string name="recipe_add_ingredients">Add ingredients to my first list</string>
     <string name="recipe_no_list">There\'s no list to add the ingredients to.</string>
+    <string name="recipe_all_at_maximum">Your first list already has the most of every ingredient.</string>
+    <string name="recipe_not_saved">Couldn\'t save the ingredients to your list.</string>
     <plurals name="recipe_ingredients_added">
         <item quantity="one">Added %d ingredient.</item>
         <item quantity="other">Added %d ingredients.</item>

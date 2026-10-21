@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +47,7 @@ class DataStoreGroceryRepositoryTest {
     fun `reports events once the change is saved`() = runTest {
         val repository = repository()
 
-        assertTrue(repository.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
+        assertEquals(AddItemsResult.Added(listOf("Milk")), repository.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
 
         assertEquals(listOf("Milk"), repository.lists.first().single().items.map { it.name })
         assertEquals(listOf(ListEvent.ItemAdded("Milk", "Groceries")), tracker.events)
@@ -59,7 +58,7 @@ class DataStoreGroceryRepositoryTest {
         val repository = repository()
         repository.addList("Household", ListIcon.HOUSEHOLD, "1")
 
-        assertTrue(repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
+        assertEquals(AddItemsResult.Added(listOf("Soap")), repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
 
         assertEquals(listOf("Soap"), repository.lists.first().first().items.map { it.name })
     }
@@ -69,8 +68,29 @@ class DataStoreGroceryRepositoryTest {
         val repository = repository()
         repository.deleteList("g")
 
-        assertFalse(repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
-        assertFalse(repository.addItems("g", listOf("Soap"), ItemOrigin.MANUAL))
+        assertEquals(AddItemsResult.NoList, repository.addItemsToDefaultList(listOf("Soap"), ItemOrigin.PAYLOAD))
+        assertEquals(AddItemsResult.NoList, repository.addItems("g", listOf("Soap"), ItemOrigin.MANUAL))
+        assertTrue(tracker.events.isEmpty())
+    }
+
+    @Test
+    fun `a change that can't be saved adds nothing and reports nothing`() = runTest {
+        val unwritable = object : DataStore<StoredGroceryLists> {
+            override val data: Flow<StoredGroceryLists> = flow { emit(StoredGroceryLists(starter)) }
+
+            override suspend fun updateData(transform: suspend (StoredGroceryLists) -> StoredGroceryLists) =
+                throw IOException("Disk full")
+        }
+        val writeErrors = mutableListOf<IOException>()
+        val repository = DataStoreGroceryRepository(
+            dataStore = unwritable,
+            tracker = tracker,
+            externalScope = backgroundScope,
+            onWriteFailed = writeErrors::add,
+        )
+
+        assertEquals(AddItemsResult.NotSaved, repository.addItems("g", listOf("Milk"), ItemOrigin.MANUAL))
+        assertEquals("Disk full", writeErrors.single().message)
         assertTrue(tracker.events.isEmpty())
     }
 

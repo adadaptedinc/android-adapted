@@ -36,10 +36,11 @@ internal class FakeGroceryRepository(initial: List<GroceryList> = emptyList()) :
     private val state = MutableStateFlow(initial)
     override val lists: StateFlow<List<GroceryList>> = state
 
-    override suspend fun edit(change: GroceryListEditor.() -> Unit): Boolean {
-        val editor = editorFor(state.value).apply(change)
+    override suspend fun <T> edit(change: GroceryListEditor.() -> T): T? {
+        val editor = editorFor(state.value)
+        val outcome = editor.change()
         if (editor.isChanged) state.value = editor.result
-        return editor.isChanged
+        return outcome
     }
 }
 
@@ -52,9 +53,10 @@ class FakeKeywordSuggestionSource(private val terms: List<String>) : KeywordSugg
 
     override fun match(query: String): List<KeywordSuggestion> {
         queries += query
+        val matchId = queries.size.toLong()
         return terms
             .filter { it.startsWith(query, ignoreCase = true) }
-            .map { KeywordSuggestion(termId = it.lowercase(), name = it) }
+            .map { KeywordSuggestion(termId = it.lowercase(), name = it, matchId = matchId) }
     }
 
     override fun reportPresented(suggestion: KeywordSuggestion) {
