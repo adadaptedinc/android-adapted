@@ -127,11 +127,6 @@ internal fun GroceryListScreen(
                 scrollBehavior = scrollBehavior,
             )
         },
-        bottomBar = {
-            if (list != null) {
-                ListAdZone(list = list, uiState = uiState, zoneHandler = zoneHandler)
-            }
-        },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -169,6 +164,10 @@ internal fun GroceryListScreen(
                         onSelect = { onAction(GroceryListAction.SuggestionSelected(it)) },
                     )
                 }
+            }
+            // Inside the ime-padded column rather than the bottom bar, so it stays above the keyboard.
+            if (list != null) {
+                ListAdZone(list = list, uiState = uiState, zoneHandler = zoneHandler)
             }
         }
     }
@@ -304,7 +303,7 @@ private fun SuggestionDropdown(
     }
 }
 
-/** The list's ad zone, pinned to the bottom of the screen. */
+/** The list's ad zone, pinned below the list. */
 @Composable
 private fun ListAdZone(list: GroceryList, uiState: GroceryListUiState, zoneHandler: AdZoneHandler) {
     Surface(

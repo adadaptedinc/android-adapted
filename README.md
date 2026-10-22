@@ -57,8 +57,8 @@ Simply clone the repository and load it up into Android Studio with the required
 
 ### Developing against the SDK source (local composite build)
 
-By default this app pulls the **published** AdAdapted SDK artifact. If you want to
-read and edit the SDK source directly from this project, check out the
+By default this app builds against the AdAdapted SDK **source**, so you can read
+and edit it directly from this project. It expects the
 [`android-sdk`](https://github.com/adadaptedinc/android-sdk) repo as a **sibling
 folder** of this one:
 
@@ -83,10 +83,10 @@ The auto-clone is a **one-time bootstrap, not a sync** — it only runs when the
 folder is absent. Once `../android-sdk` exists, Gradle builds against whatever is
 checked out there and **never updates it for you**. Two consequences:
 
-- The `com.github.adadaptedinc:android-sdk:5.0.0` version in `app/build.gradle`
+- The `com.github.adadaptedinc:android-sdk:6.0.0` version in `app/build.gradle`
   is **ignored** in local mode — the composite build substitutes it for your
   on-disk source regardless of the version string. When the SDK is tagged, say,
-  `5.1.0`, you will *not* pick it up until you update the checkout yourself:
+  `6.1.0`, you will *not* pick it up until you update the checkout yourself:
 
   ```
   cd ../android-sdk && git pull
@@ -97,7 +97,7 @@ checked out there and **never updates it for you**. Two consequences:
   version in `app/build.gradle`.
 
 Each sync prints the checked-out SDK revision, e.g.
-`Building against local SDK source at … (5.0.0)` or `… (5.0.0-4-g1a2b3c-dirty)`,
+`Building against local SDK source at … (6.0.0)` or `… (6.0.0-4-g1a2b3c-dirty)`,
 so a stale checkout is visible at a glance.
 
 Configuration (all optional, per-developer, via the gitignored `local.properties`):
