@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.compose'
+    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.gms.google-services'
 }
 
@@ -15,8 +16,6 @@ android {
         targetSdk 36
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -33,6 +32,10 @@ android {
 
     kotlin {
         jvmToolchain(17)
+        compilerOptions {
+            // Annotations like @StringRes on constructor properties apply to the parameter and the property.
+            freeCompilerArgs.add('-Xannotation-default-target=param-property')
+        }
     }
 
     buildFeatures {
@@ -41,39 +44,36 @@ android {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:32.3.1')
-
-    // Compose
-    implementation platform('androidx.compose:compose-bom:2025.01.01')
+    // Compose. The BOM is aligned with the Compose version the SDK compiles against.
+    implementation platform('androidx.compose:compose-bom:2026.01.01')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
     implementation 'androidx.compose.material:material-icons-extended'
-    implementation 'androidx.activity:activity-compose:1.9.3'
-    implementation 'androidx.navigation:navigation-compose:2.8.5'
-    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.8.7'
     debugImplementation 'androidx.compose.ui:ui-tooling'
 
     // AndroidX
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.activity:activity-compose:1.12.2'
+    implementation 'androidx.navigation:navigation-compose:2.9.6'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0'
+    implementation 'androidx.datastore:datastore:1.1.7'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0'
 
     // AdAdapted SDK
-    // Resolves to the published artifact by default. When the android-sdk repo
-    // is present as a sibling checkout, settings.gradle transparently swaps this
-    // for the local :advertising_sdk source via a composite build -- no change
-    // needed here. See the "Local AdAdapted SDK" section in settings.gradle.
-    implementation 'com.github.adadaptedinc:android-sdk:5.0.0'
+    // Builds against the local ../android-sdk source by default: settings.gradle
+    // swaps this for :advertising_sdk via a composite build, cloning the repo on
+    // first sync if it's missing. This version only applies when local source is
+    // off (adadapted.sdk.local=false) or the clone fails. See the "Local AdAdapted
+    // SDK" section in settings.gradle.
+    implementation 'com.github.adadaptedinc:android-sdk:6.0.0'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
+    implementation platform('com.google.firebase:firebase-bom:32.3.1')
+    implementation 'com.google.firebase:firebase-messaging'
 
-    // Ads identifier
-    implementation 'androidx.ads:ads-identifier:1.0.0-alpha04'
-    implementation 'com.google.guava:guava:28.0-android'
-
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
 }

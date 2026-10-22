@@ -1,26 +1,17 @@
 package com.adadapted.androidadapted.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    titleLarge = TextStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        lineHeight = 28.sp
-    ),
-    labelSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
+private val Base = Typography()
+
+/** The Material 3 type scale, with heavier display and title weights for a bolder look. */
+val Typography = Base.copy(
+    displaySmall = Base.displaySmall.copy(fontWeight = FontWeight.Bold),
+    headlineLarge = Base.headlineLarge.copy(fontWeight = FontWeight.Bold),
+    headlineMedium = Base.headlineMedium.copy(fontWeight = FontWeight.Bold),
+    headlineSmall = Base.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
+    titleLarge = Base.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+    titleMedium = Base.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+    labelLarge = Base.labelLarge.copy(fontWeight = FontWeight.SemiBold),
 )
