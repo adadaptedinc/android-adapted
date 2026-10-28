@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.google.gms.google-services'
@@ -68,7 +67,7 @@ dependencies {
     // first sync if it's missing. This version only applies when local source is
     // off (adadapted.sdk.local=false) or the clone fails. See the "Local AdAdapted
     // SDK" section in settings.gradle.
-    implementation 'com.github.adadaptedinc:android-sdk:6.0.0'
+    implementation 'com.github.adadaptedinc:android-sdk:6.0.1'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:32.3.1')

@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ManageSearch
@@ -39,7 +39,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -86,13 +89,20 @@ internal fun ActivityScreen(
     onShare: () -> Unit,
     onClear: () -> Unit,
 ) {
-    val listState = rememberLazyListState()
+    // Not saved, so coming back to the tab always starts at the newest entry.
+    val listState = remember { LazyListState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    // Follow new entries while the newest is in view, but don't yank someone reading further down.
+    // Follow new entries unless the user has scrolled away from the top. Only their own scrolling
+    // counts: entries arriving above push the list down too, and that isn't leaving the top.
+    var followNewest by remember { mutableStateOf(true) }
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.isScrollInProgress to listState.firstVisibleItemIndex }
+            .collect { (scrolling, index) -> if (scrolling) followNewest = index == 0 }
+    }
     val newestId = uiState.entries.firstOrNull()?.id
     LaunchedEffect(newestId) {
-        if (listState.firstVisibleItemIndex <= 1) listState.scrollToItem(0)
+        if (newestId == null) followNewest = true else if (followNewest) listState.scrollToItem(0)
     }
 
     Scaffold(
