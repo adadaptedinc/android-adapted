@@ -44,8 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -94,11 +97,28 @@ internal fun ActivityScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     // Follow new entries unless the user has scrolled away from the top. Only their own scrolling
-    // counts: entries arriving above push the list down too, and that isn't leaving the top.
+    // counts: entries arriving above push the list down too, and that isn't leaving the top. So the
+    // index is compared across each scroll delta, which an insertion between frames can't affect.
     var followNewest by remember { mutableStateOf(true) }
+    val userScroll = remember(listState) {
+        object : NestedScrollConnection {
+            private var indexBefore = 0
+
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                indexBefore = listState.firstVisibleItemIndex
+                return Offset.Zero
+            }
+
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                if (listState.firstVisibleItemIndex > indexBefore) followNewest = false
+                return Offset.Zero
+            }
+        }
+    }
+    // Back at the top for any reason (scrolling up, or a filter leaving fewer entries) resumes following.
     LaunchedEffect(listState) {
-        snapshotFlow { listState.isScrollInProgress to listState.firstVisibleItemIndex }
-            .collect { (scrolling, index) -> if (scrolling) followNewest = index == 0 }
+        snapshotFlow { listState.firstVisibleItemIndex == 0 }
+            .collect { atTop -> if (atTop) followNewest = true }
     }
     val newestId = uiState.entries.firstOrNull()?.id
     LaunchedEffect(newestId) {
@@ -140,7 +160,9 @@ internal fun ActivityScreen(
             } else {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(userScroll),
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
