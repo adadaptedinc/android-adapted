@@ -19,8 +19,7 @@ class AndroidAdaptedApplication : Application() {
         container.adAdaptedService.start(this)
         logPushToken()
     }
-
-    /** Push messages can deliver add-to-list payloads; the token identifies this install for testing them. */
+    
     private fun logPushToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
