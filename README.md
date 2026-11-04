@@ -83,7 +83,7 @@ The auto-clone is a **one-time bootstrap, not a sync** — it only runs when the
 folder is absent. Once `../android-sdk` exists, Gradle builds against whatever is
 checked out there and **never updates it for you**. Two consequences:
 
-- The `com.github.adadaptedinc:android-sdk:6.0.0` version in `app/build.gradle`
+- The `com.github.adadaptedinc:android-sdk:6.0.1` version in `app/build.gradle`
   is **ignored** in local mode — the composite build substitutes it for your
   on-disk source regardless of the version string. When the SDK is tagged, say,
   `6.1.0`, you will *not* pick it up until you update the checkout yourself:
