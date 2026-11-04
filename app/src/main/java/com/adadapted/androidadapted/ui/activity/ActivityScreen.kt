@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ManageSearch
@@ -39,10 +39,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -86,13 +92,37 @@ internal fun ActivityScreen(
     onShare: () -> Unit,
     onClear: () -> Unit,
 ) {
-    val listState = rememberLazyListState()
+    // Not saved, so coming back to the tab always starts at the newest entry.
+    val listState = remember { LazyListState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    // Follow new entries while the newest is in view, but don't yank someone reading further down.
+    // Follow new entries unless the user has scrolled away from the top. Only their own scrolling
+    // counts: entries arriving above push the list down too, and that isn't leaving the top. So the
+    // index is compared across each scroll delta, which an insertion between frames can't affect.
+    var followNewest by remember { mutableStateOf(true) }
+    val userScroll = remember(listState) {
+        object : NestedScrollConnection {
+            private var indexBefore = 0
+
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                indexBefore = listState.firstVisibleItemIndex
+                return Offset.Zero
+            }
+
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                if (listState.firstVisibleItemIndex > indexBefore) followNewest = false
+                return Offset.Zero
+            }
+        }
+    }
+    // Back at the top for any reason (scrolling up, or a filter leaving fewer entries) resumes following.
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemIndex == 0 }
+            .collect { atTop -> if (atTop) followNewest = true }
+    }
     val newestId = uiState.entries.firstOrNull()?.id
     LaunchedEffect(newestId) {
-        if (listState.firstVisibleItemIndex <= 1) listState.scrollToItem(0)
+        if (newestId == null) followNewest = true else if (followNewest) listState.scrollToItem(0)
     }
 
     Scaffold(
@@ -130,7 +160,9 @@ internal fun ActivityScreen(
             } else {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(userScroll),
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
